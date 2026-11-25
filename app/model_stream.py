@@ -103,6 +103,14 @@ class ChatChoice:
     def update(self,choice,state):
         delta=choice.get('delta') or {}
         if not isinstance(delta,dict):raise ValueError('模型流 delta 结构无效')
+        # Compatible providers may stream the thinking summary as `reasoning`
+        # instead of `reasoning_content`; it is the same channel, not a payload
+        # this client cannot account for.
+        if delta.get('reasoning') not in (None,'',[],{}):
+            delta=dict(delta)
+            if not delta.get('reasoning_content'):delta['reasoning_content']=delta['reasoning']
+            delta.pop('reasoning',None)
+            choice=dict(choice);choice['delta']=delta
         if self.finish is not None and any(v not in (None,'',[],{}) for v in delta.values()):
             raise ValueError('模型流在此选项结束后仍追加内容')
         known={'role','content','reasoning_content','tool_calls','refusal'}
@@ -118,6 +126,11 @@ class ChatChoice:
             state['message_snapshots']=state.get('message_snapshots',0)+1
             message=choice['message']
             if not isinstance(message,dict):raise ValueError('模型完整消息结构无效')
+            if message.get('reasoning') not in (None,'',[],{}):
+                message=dict(message)
+                if not message.get('reasoning_content'):message['reasoning_content']=message['reasoning']
+                message.pop('reasoning',None)
+                choice=dict(choice);choice['message']=message
             for key,parts in (('content',self.text),('reasoning_content',self.reasoning),('refusal',self.refusal)):
                 if message.get(key) is not None:parts[:]=[_snapshot(''.join(parts),_text(message[key],key),key)]
             if message.get('role'):self.role=message['role']

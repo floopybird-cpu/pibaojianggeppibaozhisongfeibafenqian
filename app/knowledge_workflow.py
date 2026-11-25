@@ -50,15 +50,38 @@ class KnowledgeWorkflow:
 
     def ask(self, job, step, schema, instructions, content, opts):
         tool={"type":"function","function":{"name":step,"description":instructions,"parameters":schema}}
-        with self.app.agent.client.scope(self.app.agent.runtime,job):
-            reply,usage=self.app.agent.client.complete([{"role":"system","content":instructions},
-                {"role":"user","content":content}],tools=[tool],options={**opts,"_purpose":step,"_structured_output":True,"native_search":False})
-        calls=reply.get("tool_calls") or []
-        raw=calls[0]["function"]["arguments"] if calls else reply["content"]
-        parsed=decode_record(raw)
-        if not isinstance(parsed,dict):
-            raise ValueError("教材任务未收到完整结构，可接续已保存进度")
-        return parsed
+        messages=[{"role":"system","content":instructions},{"role":"user","content":content}]
+        options={**opts,"_purpose":step,"_structured_output":True,"native_search":False}
+        required=[k for k in (schema.get("required") or [])]
+        def usable(value):
+            return isinstance(value,dict) and bool(value) and all(k in value for k in required)
+        def call(conversation):
+            with self.app.agent.client.scope(self.app.agent.runtime,job):
+                reply,usage=self.app.agent.client.complete(conversation,tools=[tool],options=options)
+            calls=reply.get("tool_calls") or []
+            return calls[0]["function"]["arguments"] if calls else (reply.get("content") or "")
+        def parse(raw):
+            try:return decode_record(raw)
+            except (ValueError,TypeError):return None
+        hint=("上一条回复不是可解析的 "+step+" 结果。只输出一个符合给定 schema 的 JSON 对象，必须包含 "+
+            "、".join(required)+"，不要解释，不要 Markdown 代码块。")
+        raw=call(messages)
+        parsed=parse(raw)
+        if usable(parsed):return parsed
+        # A provider may answer in prose, hand back truncated arguments, or (with
+        # page images attached) return an empty tool call. Re-ask, then re-ask
+        # again on the text alone so one bad turn cannot fail the batch.
+        attempts=[[*messages,{"role":"assistant","content":(raw or "")[-6000:]},{"role":"user","content":hint}]]
+        if isinstance(content,list) and any(item.get("type")=="image_url" for item in content if isinstance(item,dict)):
+            plain="\n\n".join(item.get("text","") for item in content if isinstance(item,dict) and item.get("type")=="text")
+            attempts.append([{"role":"system","content":instructions},{"role":"user","content":plain},
+                {"role":"assistant","content":(raw or "")[-6000:]},
+                {"role":"user","content":hint+"原页图不再重复附上，只依据给出的文字作答。"}])
+        for conversation in attempts:
+            raw=call(conversation)
+            parsed=parse(raw)
+            if usable(parsed):return parsed
+        raise ValueError("模型没有返回可解析的结构化结果。已完成的知识和页段仍保留，可重试；反复出现请在设置里换用支持工具调用的模型。")
 
     def check(self,job):
         if self.store.one("SELECT cancel FROM jobs WHERE id=?",(job,))["cancel"]:
