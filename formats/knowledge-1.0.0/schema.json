@@ -1,0 +1,726 @@
+{
+  "SciencePoint": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        },
+        "minItems": 1
+      },
+      "conflicts": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "minItems": 0
+      },
+      "domains": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "声",
+            "光",
+            "力",
+            "电",
+            "热"
+          ]
+        },
+        "minItems": 1
+      },
+      "category_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "definition": {
+        "type": "string",
+        "minLength": 1
+      },
+      "conditions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "observables": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "formula_refs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false,
+          "x-reference-types": [
+            "Formula"
+          ]
+        },
+        "minItems": 0
+      },
+      "prerequisites": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false,
+          "x-reference-types": [
+            "SciencePoint",
+            "MathFoundation"
+          ]
+        },
+        "minItems": 0
+      },
+      "measurement_relations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "error_relations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "claims": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "x-source-anchor": true
+              },
+              "minItems": 1
+            },
+            "status": {
+              "enum": [
+                "source_supported",
+                "inferred",
+                "pending"
+              ]
+            }
+          },
+          "required": [
+            "text",
+            "sources",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "title",
+      "sources",
+      "definition",
+      "conditions",
+      "observables",
+      "formula_refs",
+      "prerequisites",
+      "measurement_relations",
+      "error_relations",
+      "claims",
+      "domains"
+    ],
+    "additionalProperties": false
+  },
+  "MathFoundation": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        },
+        "minItems": 1
+      },
+      "conflicts": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "minItems": 0
+      },
+      "domains": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "声",
+            "光",
+            "力",
+            "电",
+            "热"
+          ]
+        },
+        "minItems": 1
+      },
+      "category_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "definition": {
+        "type": "string",
+        "minLength": 1
+      },
+      "method": {
+        "type": "string",
+        "minLength": 1
+      },
+      "conditions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "symbols": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "derivation": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "prerequisites": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false,
+          "x-reference-types": [
+            "MathFoundation"
+          ]
+        },
+        "minItems": 0
+      },
+      "claims": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "x-source-anchor": true
+              },
+              "minItems": 1
+            },
+            "status": {
+              "enum": [
+                "source_supported",
+                "inferred",
+                "pending"
+              ]
+            }
+          },
+          "required": [
+            "text",
+            "sources",
+            "status"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "title",
+      "sources",
+      "definition",
+      "method",
+      "conditions",
+      "symbols",
+      "derivation",
+      "prerequisites",
+      "claims"
+    ],
+    "additionalProperties": false
+  },
+  "Formula": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        },
+        "minItems": 1
+      },
+      "conflicts": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "minItems": 0
+      },
+      "domains": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "声",
+            "光",
+            "力",
+            "电",
+            "热"
+          ]
+        },
+        "minItems": 1
+      },
+      "category_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "latex": {
+        "type": "string",
+        "minLength": 1
+      },
+      "symbols": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "minLength": 1
+            },
+            "quantity": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dimension": {
+              "type": "string",
+              "minLength": 1
+            },
+            "shape": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "symbol",
+            "quantity",
+            "unit",
+            "dimension",
+            "shape"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      },
+      "conditions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "approximations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "verification": {
+        "enum": [
+          "verified",
+          "unverified",
+          "ocr_uncertain"
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "sources",
+      "latex",
+      "symbols",
+      "conditions",
+      "approximations",
+      "verification"
+    ],
+    "additionalProperties": false
+  },
+  "MathUse": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        },
+        "minItems": 1
+      },
+      "conflicts": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "minItems": 0
+      },
+      "domains": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "声",
+            "光",
+            "力",
+            "电",
+            "热"
+          ]
+        },
+        "minItems": 1
+      },
+      "category_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "science_ref": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "additionalProperties": false,
+        "x-reference-types": [
+          "SciencePoint"
+        ]
+      },
+      "math_ref": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "additionalProperties": false,
+        "x-reference-types": [
+          "MathFoundation"
+        ]
+      },
+      "formula_refs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false,
+          "x-reference-types": [
+            "Formula"
+          ]
+        },
+        "minItems": 0
+      },
+      "symbol_mapping": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "math": {
+              "type": "string",
+              "minLength": 1
+            },
+            "physical": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "math",
+            "physical",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      },
+      "assumptions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "title",
+      "sources",
+      "science_ref",
+      "math_ref",
+      "formula_refs",
+      "symbol_mapping",
+      "assumptions",
+      "steps"
+    ],
+    "additionalProperties": false
+  },
+  "KnowledgeRelation": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        },
+        "minItems": 1
+      },
+      "conflicts": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "minItems": 0
+      },
+      "domains": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "声",
+            "光",
+            "力",
+            "电",
+            "热"
+          ]
+        },
+        "minItems": 1
+      },
+      "category_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "from_ref": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "additionalProperties": false,
+        "x-reference-types": []
+      },
+      "to_ref": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "additionalProperties": false,
+        "x-reference-types": []
+      },
+      "relation": {
+        "enum": [
+          "先修",
+          "推出",
+          "适用于",
+          "测量",
+          "误差来源"
+        ]
+      },
+      "direction": {
+        "const": "from_to"
+      },
+      "conditions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      },
+      "status": {
+        "enum": [
+          "source_supported",
+          "inferred",
+          "pending"
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "sources",
+      "from_ref",
+      "to_ref",
+      "relation",
+      "direction",
+      "conditions",
+      "status"
+    ],
+    "additionalProperties": false
+  }
+}

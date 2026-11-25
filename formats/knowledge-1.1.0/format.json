@@ -1,0 +1,43 @@
+{
+  "id": "physics.knowledge",
+  "version": "1.1.0",
+  "data_version": 1,
+  "runtime_version": 1,
+  "object_types": [
+    "SciencePoint",
+    "MathFoundation",
+    "Formula",
+    "MathUse",
+    "KnowledgeRelation"
+  ],
+  "entries": {
+    "read": "program.json#read",
+    "query": "program.json#query",
+    "apply": "program.json#apply",
+    "build": "program.json#build",
+    "finish": "program.json#finish",
+    "planUpgrade": "program.json#planUpgrade",
+    "upgrade": "program.json#upgrade"
+  },
+  "dependencies": {
+    "latex2mathml": "3.78.1"
+  },
+  "execution": "bounded_declarative",
+  "resources": [
+    "icon.svg",
+    "schema.json",
+    "program.json",
+    "textbook_reader.md"
+  ],
+  "ui": [
+    {
+      "location": "library",
+      "object_type": "Source",
+      "activity": "distill",
+      "label": "整理到知识库",
+      "description": "按主题或有效页段阅读原件，保存可单独检索的简短说明和带页码的知识。",
+      "icon": "icon.svg"
+    }
+  ],
+  "program_language": "format-pipeline/1"
+}

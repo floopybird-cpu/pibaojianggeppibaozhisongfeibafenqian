@@ -1,0 +1,66 @@
+{
+  "language": "format-pipeline/1",
+  "read": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "pages",
+          "label": "实验数据页"
+        }
+      ]
+    }
+  ],
+  "query": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "pages",
+          "label": "实验数据页"
+        }
+      ]
+    }
+  ],
+  "apply": [
+    {
+      "op": "schema"
+    },
+    {
+      "op": "rules",
+      "checks": [
+        {
+          "check": "scope",
+          "value": "experiment"
+        },
+        {
+          "check": "worksheet"
+        }
+      ]
+    }
+  ],
+  "build": [
+    {
+      "op": "worksheet_definition"
+    }
+  ],
+  "finish": [
+    {
+      "op": "required_assets",
+      "files": [
+        "definition.json"
+      ]
+    }
+  ],
+  "planUpgrade": [
+    {
+      "op": "upgrade_preview"
+    }
+  ],
+  "upgrade": [
+    {
+      "op": "migrate",
+      "operations": []
+    }
+  ]
+}

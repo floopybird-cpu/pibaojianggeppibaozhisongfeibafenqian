@@ -1,0 +1,6 @@
+{
+  "name": "physics-harness", "version": "0.2.0", "private": true,
+  "scripts": {"build": "esbuild web/src/main.tsx --bundle --minify --sourcemap --outdir=web/dist --loader:.woff2=file --loader:.woff=file --loader:.ttf=file"},
+  "dependencies": {"react": "19.1.1", "react-dom": "19.1.1", "katex": "0.16.22"},
+  "devDependencies": {"esbuild": "0.25.11", "typescript": "5.9.3", "@types/react": "19.1.16", "@types/react-dom": "19.1.9"}
+}

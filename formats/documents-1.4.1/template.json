@@ -1,0 +1,23 @@
+{
+  "composition": "markdown-layout/1",
+  "defaults": {
+    "prestudy": "reading",
+    "plan": "worksheet",
+    "record_sheet": "print"
+  },
+  "themes": {
+    "reading": "reading.json",
+    "worksheet": "worksheet.json",
+    "classic": "classic.json",
+    "print": "print.json"
+  },
+  "pdf": {
+    "css": "",
+    "renderer": "typst"
+  },
+  "reading_edition": 2,
+  "promote_list_leads": true,
+  "balance_title": true,
+  "human_units": true,
+  "joined_symbols": true
+}

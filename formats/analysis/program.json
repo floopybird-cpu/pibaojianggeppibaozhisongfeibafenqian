@@ -1,0 +1,143 @@
+{
+  "language": "format-pipeline/1",
+  "read": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "steps",
+          "label": "分析步骤"
+        },
+        {
+          "path": "formula_map",
+          "label": "公式到代码"
+        },
+        {
+          "path": "run_info",
+          "label": "原始运行回执"
+        }
+      ]
+    }
+  ],
+  "query": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "steps",
+          "label": "分析步骤"
+        },
+        {
+          "path": "formula_map",
+          "label": "公式到代码"
+        },
+        {
+          "path": "run_info",
+          "label": "原始运行回执"
+        }
+      ]
+    }
+  ],
+  "apply": [
+    {
+      "op": "runtime_environment",
+      "kinds": [
+        "AnalysisProgram"
+      ]
+    },
+    {
+      "op": "schema"
+    },
+    {
+      "op": "rules",
+      "checks": [
+        {
+          "check": "catalog_subset",
+          "path": "method_ids.*",
+          "file": "methods.json",
+          "key": "methods",
+          "id_field": "id",
+          "message": "分析方式未在固定包中声明"
+        }
+      ]
+    },
+    {
+      "op": "rules",
+      "checks": [
+        {
+          "check": "scope",
+          "value": "experiment"
+        },
+        {
+          "check": "python_syntax",
+          "path": "code"
+        }
+      ]
+    },
+    {
+      "op": "normalize",
+      "trim": [
+        "title"
+      ],
+      "deduplicate": [
+        "sources",
+        "category_ids"
+      ]
+    }
+  ],
+  "build": [
+    {
+      "op": "program_files",
+      "kinds": [
+        "AnalysisProgram"
+      ],
+      "files": {
+        "inputs.json": "inputs",
+        "parameters.json": "parameters",
+        "environment.lock": "environment",
+        "formula-map.json": "formula_map"
+      }
+    },
+    {
+      "op": "copy_resources",
+      "kinds": [
+        "AnalysisProgram"
+      ],
+      "files": {
+        "reference.py": "analysis_methods.py"
+      }
+    },
+    {
+      "op": "analysis_inputs",
+      "kinds": [
+        "AnalysisProgram"
+      ]
+    }
+  ],
+  "finish": [
+    {
+      "op": "required_assets",
+      "files": [],
+      "by_kind": {
+        "AnalysisProgram": [
+          "analysis.py",
+          "inputs.json",
+          "parameters.json",
+          "environment.lock",
+          "formula-map.json"
+        ]
+      }
+    }
+  ],
+  "planUpgrade": [
+    {
+      "op": "upgrade_preview"
+    }
+  ],
+  "upgrade": [
+    {
+      "op": "migrate",
+      "operations": []
+    }
+  ]
+}

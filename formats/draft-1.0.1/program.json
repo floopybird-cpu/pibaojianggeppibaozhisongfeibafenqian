@@ -1,0 +1,83 @@
+{
+  "language": "format-pipeline/1",
+  "read": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "purpose",
+          "label": "本次目标"
+        },
+        {
+          "path": "source_strategy",
+          "label": "选材原则"
+        },
+        {
+          "path": "stages",
+          "label": "实验工作草稿"
+        }
+      ]
+    }
+  ],
+  "query": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "purpose",
+          "label": "本次目标"
+        },
+        {
+          "path": "source_strategy",
+          "label": "选材原则"
+        },
+        {
+          "path": "stages",
+          "label": "实验工作草稿"
+        }
+      ]
+    }
+  ],
+  "apply": [
+    {
+      "op": "schema"
+    },
+    {
+      "op": "rules",
+      "checks": [
+        {
+          "check": "scope",
+          "value": "experiment"
+        },
+        {
+          "check": "experiment_draft"
+        }
+      ]
+    }
+  ],
+  "build": [
+    {
+      "op": "experiment_draft_files"
+    }
+  ],
+  "finish": [
+    {
+      "op": "required_assets",
+      "files": [
+        "draft.md",
+        "draft.json"
+      ]
+    }
+  ],
+  "planUpgrade": [
+    {
+      "op": "upgrade_preview"
+    }
+  ],
+  "upgrade": [
+    {
+      "op": "migrate",
+      "operations": []
+    }
+  ]
+}

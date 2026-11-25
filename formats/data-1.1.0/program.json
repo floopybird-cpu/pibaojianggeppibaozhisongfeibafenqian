@@ -1,0 +1,109 @@
+{
+  "language": "format-pipeline/1",
+  "read": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "records",
+          "label": "分组测量记录"
+        },
+        {
+          "path": "observations",
+          "label": "原文观察"
+        },
+        {
+          "path": "issues",
+          "label": "待确认问题"
+        },
+        {
+          "path": "original_lines",
+          "label": "完整原始记录"
+        },
+        {
+          "path": "history",
+          "label": "实际答复历史"
+        }
+      ]
+    }
+  ],
+  "query": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "records",
+          "label": "分组测量记录"
+        },
+        {
+          "path": "observations",
+          "label": "原文观察"
+        },
+        {
+          "path": "issues",
+          "label": "待确认问题"
+        },
+        {
+          "path": "original_lines",
+          "label": "完整原始记录"
+        },
+        {
+          "path": "history",
+          "label": "实际答复历史"
+        }
+      ]
+    }
+  ],
+  "apply": [
+    {
+      "op": "schema"
+    },
+    {
+      "op": "rules",
+      "checks": [
+        {
+          "check": "scope",
+          "value": "global"
+        },
+        {
+          "check": "workbook"
+        }
+      ]
+    },
+    {
+      "op": "normalize",
+      "trim": [
+        "title"
+      ],
+      "deduplicate": [
+        "sources"
+      ]
+    }
+  ],
+  "build": [
+    {
+      "op": "workbook",
+      "source_context": true
+    }
+  ],
+  "finish": [
+    {
+      "op": "required_assets",
+      "files": [
+        "data.xlsx",
+        "normalized.json"
+      ]
+    }
+  ],
+  "planUpgrade": [
+    {
+      "op": "upgrade_preview"
+    }
+  ],
+  "upgrade": [
+    {
+      "op": "migrate",
+      "operations": []
+    }
+  ]
+}

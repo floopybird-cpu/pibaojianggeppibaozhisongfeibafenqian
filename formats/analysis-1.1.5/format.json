@@ -1,0 +1,50 @@
+{
+  "id": "physics.analysis",
+  "version": "1.1.5",
+  "data_version": 1,
+  "runtime_version": 1,
+  "object_types": [
+    "AnalysisProgram",
+    "AnalysisResult"
+  ],
+  "entries": {
+    "read": "program.json#read",
+    "query": "program.json#query",
+    "apply": "program.json#apply",
+    "build": "program.json#build",
+    "finish": "program.json#finish",
+    "planUpgrade": "program.json#planUpgrade",
+    "upgrade": "program.json#upgrade"
+  },
+  "dependencies": {
+    "numpy": "2.3.4",
+    "matplotlib": "3.10.7"
+  },
+  "execution": "bounded_declarative",
+  "resources": [
+    "icon.svg",
+    "schema.json",
+    "program.json",
+    "methods.json",
+    "reference.py"
+  ],
+  "ui": [
+    {
+      "location": "experiment",
+      "object_type": "ExperimentInstance",
+      "activity": "program",
+      "label": "编写分析程序",
+      "description": "同一实验 Agent 按本次数据现场写程序、固定公式映射并受限运行；不自动安装代码依赖。",
+      "icon": "icon.svg"
+    },
+    {
+      "location": "experiment",
+      "object_type": "ExperimentInstance",
+      "activity": "methods",
+      "label": "基础分析方法",
+      "description": "包内规定的拟合、冷却局部导数、准稳态、热电积分和敏感性；现场代码仍由同一Agent构建。",
+      "icon": "icon.svg"
+    }
+  ],
+  "program_language": "format-pipeline/1"
+}

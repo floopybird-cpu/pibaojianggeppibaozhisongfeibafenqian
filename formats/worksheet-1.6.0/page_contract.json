@@ -1,0 +1,283 @@
+{
+  "type": "object",
+  "properties": {
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "page": {
+                "type": "string"
+              },
+              "quote": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "page",
+              "quote"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "unit"
+        ]
+      }
+    },
+    "tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "hint": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "symbol": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "unit"
+              ]
+            }
+          },
+          "derived": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "expr": {
+                  "type": "string"
+                },
+                "symbol": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "unit",
+                "expr"
+              ]
+            }
+          },
+          "selection": {
+            "type": "object",
+            "properties": {
+              "column": {
+                "type": "string"
+              },
+              "min": {
+                "type": "string"
+              },
+              "max": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "column"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rows",
+          "columns"
+        ]
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "expr": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "table": {
+            "type": "string"
+          },
+          "digits": {
+            "type": "integer"
+          },
+          "uncertainty": {
+            "type": "string"
+          },
+          "u_digits": {
+            "type": "integer"
+          },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "nonnegative",
+              "signed",
+              "fraction"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "intermediate",
+              "check"
+            ]
+          },
+          "basis": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "string"
+              },
+              "locator": {
+                "type": "string"
+              },
+              "quote": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "page"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "unit",
+          "expr"
+        ]
+      }
+    },
+    "plots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "table": {
+            "type": "string"
+          },
+          "x": {
+            "type": "string"
+          },
+          "ys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fit": {
+            "type": "string",
+            "enum": [
+              "none",
+              "linear"
+            ]
+          },
+          "sigma": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "table",
+          "x",
+          "ys",
+          "fit"
+        ]
+      }
+    }
+  },
+  "required": [
+    "fields",
+    "tables",
+    "results",
+    "plots"
+  ]
+}

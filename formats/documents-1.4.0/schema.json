@@ -1,0 +1,2023 @@
+{
+  "LearningDocument": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        },
+        "minItems": 1
+      },
+      "doc_type": {
+        "enum": [
+          "prestudy",
+          "plan",
+          "record_sheet"
+        ]
+      },
+      "summary": {
+        "type": "string"
+      },
+      "background": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string",
+            "minLength": 1
+          },
+          "goal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minutes": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "level",
+          "goal"
+        ],
+        "additionalProperties": false
+      },
+      "sections": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "blocks": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "paragraph"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "equation"
+                      },
+                      "latex": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "symbols": {
+                        "type": "string"
+                      },
+                      "formula_ref": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "revision": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "revision"
+                        ],
+                        "additionalProperties": false,
+                        "x-reference-types": [
+                          "Formula"
+                        ]
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "latex",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "table"
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "columns": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      },
+                      "rows": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 0
+                        },
+                        "minItems": 0
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "column_weights": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "minItems": 1
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "caption",
+                      "columns",
+                      "rows",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "figure"
+                      },
+                      "source_anchor": {
+                        "type": "string",
+                        "minLength": 1,
+                        "x-source-anchor": true
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 1
+                      },
+                      "width_cm": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "align": {
+                        "enum": [
+                          "left",
+                          "center",
+                          "right"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "source_anchor",
+                      "caption",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "code"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "language": {
+                        "type": "string"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "crossref"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "target": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "target"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "markdown"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "columns"
+                      },
+                      "columns": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "blocks": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "minItems": 1
+                            }
+                          },
+                          "required": [
+                            "blocks"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 2
+                      },
+                      "weights": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "minItems": 2
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "columns"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "pagebreak"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "space"
+                      },
+                      "height_pt": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "goal_summary"
+                      },
+                      "show_title": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "procedure"
+                      },
+                      "show_title": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "measurement_table"
+                      },
+                      "workbook_ref": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "minimum": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "revision"
+                        ],
+                        "additionalProperties": false,
+                        "x-reference-types": [
+                          "DataWorkbook"
+                        ]
+                      },
+                      "record_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1
+                      },
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "quantity",
+                            "values",
+                            "unit",
+                            "section",
+                            "note",
+                            "status"
+                          ]
+                        },
+                        "minItems": 1
+                      },
+                      "column_weights": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0.001
+                        }
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "x-source-anchor": true
+                        },
+                        "minItems": 1
+                      },
+                      "caption": {
+                        "type": "string"
+                      },
+                      "headers": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "workbook_ref",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "worked_example"
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "branch": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "inputs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "observation": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "value": {
+                              "type": "number"
+                            },
+                            "origin": {
+                              "enum": [
+                                "hypothetical",
+                                "reference"
+                              ]
+                            },
+                            "source_anchor": {
+                              "type": "string",
+                              "minLength": 1,
+                              "x-source-anchor": true
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "observation",
+                            "value",
+                            "origin"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      },
+                      "calculations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "quantity": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "method": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "expression": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "significant_digits": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 15
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "quantity",
+                            "method",
+                            "expression",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "caption",
+                      "branch",
+                      "inputs",
+                      "calculations",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "branch_table"
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "branches": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "caption",
+                      "branches",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "minItems": 1
+            },
+            "page_break_before": {
+              "type": "boolean"
+            },
+            "heading_level": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            },
+            "show_heading": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "blocks"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      },
+      "appendices": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "blocks": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "paragraph"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "equation"
+                      },
+                      "latex": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "symbols": {
+                        "type": "string"
+                      },
+                      "formula_ref": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "revision": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "revision"
+                        ],
+                        "additionalProperties": false,
+                        "x-reference-types": [
+                          "Formula"
+                        ]
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "latex",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "table"
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "columns": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      },
+                      "rows": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 0
+                        },
+                        "minItems": 0
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "column_weights": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "minItems": 1
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "caption",
+                      "columns",
+                      "rows",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "figure"
+                      },
+                      "source_anchor": {
+                        "type": "string",
+                        "minLength": 1,
+                        "x-source-anchor": true
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 1
+                      },
+                      "width_cm": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "align": {
+                        "enum": [
+                          "left",
+                          "center",
+                          "right"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "source_anchor",
+                      "caption",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "code"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "language": {
+                        "type": "string"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "crossref"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "target": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "target"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "markdown"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "enum": [
+                          "source",
+                          "derivation",
+                          "example",
+                          "explanation"
+                        ]
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "columns"
+                      },
+                      "columns": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "blocks": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              },
+                              "minItems": 1
+                            }
+                          },
+                          "required": [
+                            "blocks"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 2
+                      },
+                      "weights": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "minItems": 2
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "columns"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "pagebreak"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "space"
+                      },
+                      "height_pt": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "goal_summary"
+                      },
+                      "show_title": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "procedure"
+                      },
+                      "show_title": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "measurement_table"
+                      },
+                      "workbook_ref": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "minimum": 1
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "revision"
+                        ],
+                        "additionalProperties": false,
+                        "x-reference-types": [
+                          "DataWorkbook"
+                        ]
+                      },
+                      "record_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1
+                      },
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "quantity",
+                            "values",
+                            "unit",
+                            "section",
+                            "note",
+                            "status"
+                          ]
+                        },
+                        "minItems": 1
+                      },
+                      "column_weights": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0.001
+                        }
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "x-source-anchor": true
+                        },
+                        "minItems": 1
+                      },
+                      "caption": {
+                        "type": "string"
+                      },
+                      "headers": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "workbook_ref",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "worked_example"
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "branch": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "inputs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "observation": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "value": {
+                              "type": "number"
+                            },
+                            "origin": {
+                              "enum": [
+                                "hypothetical",
+                                "reference"
+                              ]
+                            },
+                            "source_anchor": {
+                              "type": "string",
+                              "minLength": 1,
+                              "x-source-anchor": true
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "observation",
+                            "value",
+                            "origin"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      },
+                      "calculations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "quantity": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "method": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "expression": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "unit": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "significant_digits": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 15
+                            }
+                          },
+                          "required": [
+                            "key",
+                            "quantity",
+                            "method",
+                            "expression",
+                            "unit"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "minItems": 1
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "caption",
+                      "branch",
+                      "inputs",
+                      "calculations",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "branch_table"
+                      },
+                      "caption": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "branches": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "x-source-anchor": true
+                        },
+                        "minItems": 0
+                      },
+                      "citation": {
+                        "enum": [
+                          "auto",
+                          "nearby",
+                          "bibliography"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "caption",
+                      "branches",
+                      "sources"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "minItems": 1
+            },
+            "page_break_before": {
+              "type": "boolean"
+            },
+            "heading_level": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            },
+            "show_heading": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "blocks"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0
+      },
+      "knowledge_refs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "id",
+            "revision"
+          ],
+          "additionalProperties": false,
+          "x-reference-types": []
+        },
+        "minItems": 0
+      },
+      "warnings": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "simulation": {
+        "type": "boolean"
+      },
+      "style": {
+        "type": "object",
+        "properties": {
+          "theme": {
+            "type": "string",
+            "minLength": 1
+          },
+          "font": {
+            "type": "string",
+            "minLength": 1
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "enum": [
+              "A4",
+              "Letter"
+            ]
+          },
+          "orientation": {
+            "enum": [
+              "portrait",
+              "landscape"
+            ]
+          },
+          "margins_cm": {
+            "type": "object",
+            "properties": {
+              "top": {
+                "type": "number",
+                "minimum": 0
+              },
+              "bottom": {
+                "type": "number",
+                "minimum": 0
+              },
+              "left": {
+                "type": "number",
+                "minimum": 0
+              },
+              "right": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "show_background": {
+            "type": "boolean"
+          },
+          "flow": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "summary",
+                "background",
+                "warnings",
+                "sections",
+                "goals",
+                "steps",
+                "appendices",
+                "sources"
+              ]
+            }
+          },
+          "font_size": {
+            "type": "number",
+            "minimum": 0
+          },
+          "line_spacing": {
+            "type": "number",
+            "minimum": 0
+          },
+          "paragraph_spacing": {
+            "type": "number",
+            "minimum": 0
+          },
+          "title_size": {
+            "type": "number",
+            "minimum": 0
+          },
+          "heading_size": {
+            "type": "number",
+            "minimum": 0
+          },
+          "subheading_size": {
+            "type": "number",
+            "minimum": 0
+          },
+          "table_font_size": {
+            "type": "number",
+            "minimum": 0
+          },
+          "table_padding_pt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "accent": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6
+          },
+          "table_header": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6
+          },
+          "table_header_text": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6
+          },
+          "table_stripe": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 6
+          },
+          "source_font_size": {
+            "type": "number",
+            "minimum": 0
+          },
+          "source_spacing": {
+            "type": "number",
+            "minimum": 0
+          },
+          "table_padding_horizontal_pt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "table_padding_vertical_pt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sources_layout": {
+            "enum": [
+              "list",
+              "compact"
+            ]
+          },
+          "heading_space_before_pt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "heading_space_after_pt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "title_space_after_pt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "concise_plan": {
+            "type": "boolean"
+          },
+          "first_line_chars": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "goals": {
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "quantity": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "formula_ref": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "revision"
+                  ],
+                  "additionalProperties": false,
+                  "x-reference-types": [
+                    "Formula"
+                  ]
+                },
+                "conditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-source-anchor": true
+                  },
+                  "minItems": 1
+                },
+                "measurements": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "quantity": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "timing": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "condition": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "instrument": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "precision": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "quantity",
+                      "unit",
+                      "timing",
+                      "condition",
+                      "instrument"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "quantitative"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "quantity",
+                "unit",
+                "model",
+                "formula_ref",
+                "conditions",
+                "sources",
+                "measurements"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "qualitative"
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "objective": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "conditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "observation_plan": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-source-anchor": true
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "kind",
+                "id",
+                "objective",
+                "conditions",
+                "observation_plan",
+                "sources"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "minItems": 1
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "action": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "conditions": {
+              "type": "string",
+              "minLength": 1
+            },
+            "completion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "goal_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "instrument_appendix": {
+              "const": "instruments"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "x-source-anchor": true
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "id",
+            "action",
+            "reason",
+            "conditions",
+            "completion",
+            "goal_ids",
+            "instrument_appendix",
+            "sources"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      },
+      "parent_document": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "additionalProperties": false,
+        "x-reference-types": [
+          "LearningDocument"
+        ]
+      },
+      "draft_ref": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "additionalProperties": false,
+        "x-reference-types": [
+          "ExperimentDraft"
+        ]
+      },
+      "draft_points": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "title",
+      "sources",
+      "doc_type",
+      "summary",
+      "background",
+      "sections",
+      "appendices",
+      "knowledge_refs",
+      "warnings",
+      "simulation"
+    ],
+    "additionalProperties": false
+  }
+}

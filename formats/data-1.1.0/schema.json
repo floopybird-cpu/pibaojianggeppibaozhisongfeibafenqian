@@ -1,0 +1,302 @@
+{
+  "DataWorkbook": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_sha": {
+        "type": "string",
+        "minLength": 1
+      },
+      "original_lines": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "number": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "number",
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      },
+      "records": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "section": {
+              "type": "string"
+            },
+            "quantity": {
+              "type": "string"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "unit": {
+              "type": "string"
+            },
+            "source_line": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "source_quote": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "enum": [
+                "recorded",
+                "pending",
+                "confirmed",
+                "inferred"
+              ]
+            },
+            "note": {
+              "type": "string"
+            },
+            "evidence_lines": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "id",
+            "section",
+            "quantity",
+            "values",
+            "unit",
+            "source_line",
+            "source_quote",
+            "status",
+            "note"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0
+      },
+      "observations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "section": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_line": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "section",
+            "text",
+            "source_line"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0
+      },
+      "issues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "question": {
+              "type": "string",
+              "minLength": 1
+            },
+            "record_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 0
+            },
+            "field": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "enum": [
+                "open",
+                "answered",
+                "unknown"
+              ]
+            },
+            "answer": {
+              "type": "string"
+            },
+            "confirmation_question_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "question",
+            "record_ids",
+            "field",
+            "status",
+            "answer",
+            "confirmation_question_id"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0
+      },
+      "history": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "issue_id": {
+              "type": "string"
+            },
+            "question_id": {
+              "type": "string"
+            },
+            "answer": {
+              "type": "string"
+            },
+            "updated": {
+              "type": "string"
+            },
+            "updates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "record_id": {
+                    "type": "string"
+                  },
+                  "before": {
+                    "type": "object",
+                    "properties": {
+                      "quantity": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      },
+                      "section": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  },
+                  "after": {
+                    "type": "object",
+                    "properties": {
+                      "quantity": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      },
+                      "section": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "record_id",
+                  "before",
+                  "after"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0
+            },
+            "confirmation_verified": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "issue_id",
+            "question_id",
+            "answer",
+            "updated",
+            "updates",
+            "confirmation_verified"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "title",
+      "source_id",
+      "source_sha",
+      "original_lines",
+      "records",
+      "observations",
+      "issues",
+      "history",
+      "sources"
+    ],
+    "additionalProperties": false
+  }
+}

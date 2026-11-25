@@ -1,0 +1,15 @@
+/runtime/
+/data/
+/data-*/
+/qa/
+/生成产物/
+/交付包/
+/examples/
+/node_modules/
+/web/dist/
+__pycache__/
+*.py[cod]
+*.sqlite3*
+*.dpapi
+.env
+.env.*

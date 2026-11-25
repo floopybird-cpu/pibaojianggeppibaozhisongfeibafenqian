@@ -1,0 +1,124 @@
+{
+  "language": "format-pipeline/1",
+  "read": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "definition",
+          "label": "定义"
+        },
+        {
+          "path": "conditions",
+          "label": "条件"
+        },
+        {
+          "path": "latex",
+          "label": "公式"
+        },
+        {
+          "path": "claims",
+          "label": "逐条断言"
+        }
+      ]
+    }
+  ],
+  "query": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "definition",
+          "label": "定义"
+        },
+        {
+          "path": "conditions",
+          "label": "条件"
+        },
+        {
+          "path": "latex",
+          "label": "公式"
+        },
+        {
+          "path": "claims",
+          "label": "逐条断言"
+        }
+      ]
+    }
+  ],
+  "apply": [
+    {
+      "op": "schema"
+    },
+    {
+      "op": "rules",
+      "checks": [
+        {
+          "check": "scope",
+          "value": "global"
+        },
+        {
+          "check": "math",
+          "path": "latex"
+        }
+      ]
+    },
+    {
+      "op": "normalize",
+      "trim": [
+        "title"
+      ],
+      "deduplicate": [
+        "sources",
+        "category_ids"
+      ]
+    }
+  ],
+  "build": [
+    {
+      "op": "normalize",
+      "trim": []
+    }
+  ],
+  "finish": [
+    {
+      "op": "required_assets",
+      "files": [],
+      "by_kind": {}
+    }
+  ],
+  "planUpgrade": [
+    {
+      "op": "upgrade_preview"
+    }
+  ],
+  "upgrade": [
+    {
+      "op": "migrate",
+      "operations": []
+    }
+  ],
+  "merge": {
+    "identity_exclude": [
+      "sources",
+      "claims",
+      "category_ids",
+      "conflicts",
+      "search_summary",
+      "search_terms"
+    ],
+    "union": [
+      "sources",
+      "claims",
+      "category_ids",
+      "conflicts"
+    ],
+    "conflict_fields": [
+      "definition",
+      "conditions",
+      "latex",
+      "symbols",
+      "approximations"
+    ]
+  }
+}

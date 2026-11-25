@@ -1,0 +1,22 @@
+{
+  "page": "A4",
+  "font": "Microsoft YaHei",
+  "language": "zh-CN",
+  "appendix_new_page": false,
+  "equations": "OMML",
+  "required_outputs": [
+    "document.docx",
+    "document.md",
+    "preview.html",
+    "sources.json",
+    "document.pdf"
+  ],
+  "keep_table_header_with_first_row": true,
+  "show_goal_equations": true,
+  "content_aware_table_widths": true,
+  "pdf": {
+    "css": "",
+    "svg_version": "1.1 paths",
+    "long_equations": "wrap at relations"
+  }
+}

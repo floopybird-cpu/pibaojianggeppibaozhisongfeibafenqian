@@ -1,0 +1,548 @@
+{
+  "ExperimentDraft": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "purpose": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_strategy": {
+        "type": "string",
+        "minLength": 1
+      },
+      "measurement_methods": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "purpose": {
+              "type": "string",
+              "minLength": 1
+            },
+            "material_pages": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "source_index": {
+              "type": "object"
+            },
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "meaning": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "source": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "enum": [
+                      "computed",
+                      "observation"
+                    ]
+                  },
+                  "components": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "meaning": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "source": {
+                          "oneOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            {
+                              "type": "object"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "label",
+                        "unit",
+                        "meaning",
+                        "source"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "unit",
+                  "meaning",
+                  "source",
+                  "kind"
+                ]
+              }
+            },
+            "observables": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "meaning": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "source": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "form": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "derived_from": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "unit",
+                  "form",
+                  "meaning",
+                  "source"
+                ]
+              }
+            },
+            "equations": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                ]
+              }
+            },
+            "page": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "x-source-anchor": true
+                  }
+                },
+                "fields": {
+                  "type": "array"
+                },
+                "tables": {
+                  "type": "array"
+                },
+                "results": {
+                  "type": "array"
+                },
+                "plots": {
+                  "type": "array"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "sources",
+                "fields",
+                "tables",
+                "results",
+                "plots"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "purpose",
+            "material_pages",
+            "source_index",
+            "targets",
+            "observables",
+            "equations"
+          ]
+        }
+      },
+      "stages": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scope": {
+              "enum": [
+                "overview",
+                "developed"
+              ]
+            },
+            "points": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "knowledge": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "enum": [
+                            "definition",
+                            "fact",
+                            "formula",
+                            "procedure"
+                          ],
+                          "type": "string"
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "text"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 1
+                  },
+                  "material_plan": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "interpretations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "question": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "emphasis": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "question",
+                        "emphasis"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "depends_on": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "x-source-anchor": true
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "knowledge",
+                  "material_plan",
+                  "interpretations"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "x-source-anchor": true
+              }
+            }
+          },
+          "required": [
+            "key",
+            "title",
+            "scope",
+            "points"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 4
+      },
+      "request": {
+        "type": "object"
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        }
+      },
+      "delivery_requests": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "observations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "quantity": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "setup": {
+              "type": "string",
+              "minLength": 1
+            },
+            "criterion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "x-source-anchor": true
+              },
+              "minItems": 0
+            },
+            "setup_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "quantity",
+            "unit",
+            "setup",
+            "criterion"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0
+      },
+      "branches": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "condition": {
+              "type": "string",
+              "minLength": 1
+            },
+            "observables": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            },
+            "action": {
+              "type": "string",
+              "minLength": 1
+            },
+            "setup_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "prior_observations": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "id",
+            "condition",
+            "observables",
+            "action"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 0
+      },
+      "deliverables": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "prestudy",
+            "plan",
+            "record_sheet",
+            "program",
+            "analysis_result",
+            "workbook"
+          ]
+        },
+        "minItems": 0
+      }
+    },
+    "required": [
+      "title",
+      "purpose",
+      "source_strategy",
+      "stages",
+      "request"
+    ],
+    "additionalProperties": false
+  }
+}

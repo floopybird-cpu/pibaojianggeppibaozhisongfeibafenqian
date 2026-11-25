@@ -1,0 +1,255 @@
+{
+  "language": "format-pipeline/1",
+  "read": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "sections",
+          "label": "正文"
+        },
+        {
+          "path": "appendices",
+          "label": "附录"
+        }
+      ]
+    }
+  ],
+  "query": [
+    {
+      "op": "view",
+      "fields": [
+        {
+          "path": "sections",
+          "label": "正文"
+        },
+        {
+          "path": "appendices",
+          "label": "附录"
+        }
+      ]
+    }
+  ],
+  "apply": [
+    {
+      "op": "collect_document_sources"
+    },
+    {
+      "op": "schema"
+    },
+    {
+      "op": "rules",
+      "checks": [
+        {
+          "check": "scope",
+          "value": "experiment"
+        },
+        {
+          "check": "unique",
+          "paths": [
+            "sections.*.id",
+            "appendices.*.id"
+          ],
+          "message": "章节／附录 ID 重复"
+        },
+        {
+          "check": "set_contains",
+          "path": "appendices.*.id",
+          "values": [
+            "records",
+            "errors",
+            "instruments",
+            "reading"
+          ],
+          "message": "实验计划缺四项独立附录",
+          "when": {
+            "path": "doc_type",
+            "equals": "plan"
+          }
+        },
+        {
+          "check": "set_contains",
+          "path": "goals.*.id",
+          "values": [],
+          "message": "实验计划缺目标",
+          "when": {
+            "path": "doc_type",
+            "equals": "plan"
+          }
+        },
+        {
+          "check": "equal_sets",
+          "path": "goals.*.id",
+          "other": "steps.*.goal_ids.*",
+          "message": "目标量与步骤覆盖不一致",
+          "when": {
+            "path": "doc_type",
+            "equals": "plan"
+          }
+        },
+        {
+          "check": "math",
+          "path": "sections.*.blocks.*.latex"
+        },
+        {
+          "check": "math",
+          "path": "appendices.*.blocks.*.latex"
+        },
+        {
+          "check": "reference_match",
+          "path": "sections.*.blocks.*",
+          "reference": "formula_ref",
+          "field": "latex",
+          "reference_field": "latex",
+          "message": "显示公式与固定引用不一致"
+        },
+        {
+          "check": "reference_match",
+          "path": "appendices.*.blocks.*",
+          "reference": "formula_ref",
+          "field": "latex",
+          "reference_field": "latex",
+          "message": "显示公式与固定引用不一致"
+        },
+        {
+          "check": "image_exists",
+          "path": "sections.*.blocks.*.source_anchor"
+        },
+        {
+          "check": "image_exists",
+          "path": "appendices.*.blocks.*.source_anchor"
+        },
+        {
+          "check": "subset",
+          "path": "sections.*.blocks.*.sources.*",
+          "other": "sources.*",
+          "message": "块／目标／步骤来源未列入总清单"
+        },
+        {
+          "check": "subset",
+          "path": "appendices.*.blocks.*.sources.*",
+          "other": "sources.*",
+          "message": "块／目标／步骤来源未列入总清单"
+        },
+        {
+          "check": "subset",
+          "path": "goals.*.sources.*",
+          "other": "sources.*",
+          "message": "块／目标／步骤来源未列入总清单"
+        },
+        {
+          "check": "subset",
+          "path": "steps.*.sources.*",
+          "other": "sources.*",
+          "message": "块／目标／步骤来源未列入总清单"
+        },
+        {
+          "check": "subset",
+          "path": "sections.*.blocks.*.target",
+          "other_paths": [
+            "sections.*.id",
+            "appendices.*.id"
+          ],
+          "message": "交叉引用目标不存在"
+        },
+        {
+          "check": "subset",
+          "path": "appendices.*.blocks.*.target",
+          "other_paths": [
+            "sections.*.id",
+            "appendices.*.id"
+          ],
+          "message": "交叉引用目标不存在"
+        },
+        {
+          "check": "required_when",
+          "fields": [
+            "goals",
+            "steps"
+          ],
+          "when": {
+            "path": "doc_type",
+            "equals": "plan"
+          },
+          "message": "实验计划缺目标或步骤"
+        },
+        {
+          "check": "table_width",
+          "paths": [
+            "sections.*.blocks.*",
+            "appendices.*.blocks.*"
+          ]
+        },
+        {
+          "check": "composition",
+          "template": "template.json"
+        }
+      ]
+    },
+    {
+      "op": "normalize",
+      "trim": [
+        "title"
+      ],
+      "deduplicate": [
+        "sources",
+        "category_ids"
+      ]
+    }
+  ],
+  "build": [
+    {
+      "op": "docx",
+      "template": "template.json"
+    },
+    {
+      "op": "pdf",
+      "template": "template.json"
+    }
+  ],
+  "finish": [
+    {
+      "op": "required_assets",
+      "files": [
+        "document.docx",
+        "document.pdf",
+        "document.md",
+        "preview.html",
+        "sources.json",
+        "design.json",
+        "composition.json",
+        "pagination.json"
+      ],
+      "by_kind": {}
+    }
+  ],
+  "planUpgrade": [
+    {
+      "op": "upgrade_preview"
+    }
+  ],
+  "upgrade": [
+    {
+      "op": "migrate",
+      "operations": [
+        {
+          "operation": "set_style_by_enum",
+          "field": "doc_type",
+          "style_field": "theme",
+          "values": {
+            "short": "reading",
+            "deep": "classic"
+          }
+        },
+        {
+          "operation": "map_enum",
+          "field": "doc_type",
+          "values": {
+            "short": "prestudy",
+            "deep": "prestudy"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "physics.data",
+  "version": "1.1.1",
+  "data_version": 1,
+  "runtime_version": 1,
+  "object_types": [
+    "DataWorkbook"
+  ],
+  "entries": {
+    "read": "program.json#read",
+    "query": "program.json#query",
+    "apply": "program.json#apply",
+    "build": "program.json#build",
+    "finish": "program.json#finish",
+    "planUpgrade": "program.json#planUpgrade",
+    "upgrade": "program.json#upgrade"
+  },
+  "dependencies": {
+    "openpyxl": "3.1.5"
+  },
+  "execution": "bounded_declarative",
+  "resources": [
+    "icon.svg",
+    "schema.json",
+    "program.json"
+  ],
+  "ui": [
+    {
+      "location": "library",
+      "object_type": "Source",
+      "activity": "organize_data",
+      "label": "整理测量记录",
+      "description": "将混合的原始文字测量记录整理成分组Excel，保留全部原文、原精度、观察和待确认问题；不跨实验计算。",
+      "icon": "icon.svg"
+    }
+  ],
+  "program_language": "format-pipeline/1"
+}

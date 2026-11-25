@@ -1,0 +1,68 @@
+{
+  "id": "physics.documents",
+  "version": "1.0.4",
+  "data_version": 1,
+  "runtime_version": 1,
+  "object_types": [
+    "LearningDocument"
+  ],
+  "entries": {
+    "read": "program.json#read",
+    "query": "program.json#query",
+    "apply": "program.json#apply",
+    "build": "program.json#build",
+    "finish": "program.json#finish",
+    "planUpgrade": "program.json#planUpgrade",
+    "upgrade": "program.json#upgrade"
+  },
+  "dependencies": {
+    "python-docx": "1.2.0",
+    "latex2mathml": "3.78.1",
+    "lxml": "6.0.2",
+    "ziamath": "0.13",
+    "ziafont": "0.11",
+    "PyMuPDF": "1.26.7"
+  },
+  "execution": "bounded_declarative",
+  "resources": [
+    "icon.svg",
+    "template.json",
+    "schema.json",
+    "program.json"
+  ],
+  "ui": [
+    {
+      "location": "experiment",
+      "object_type": "ExperimentInstance",
+      "activity": "short",
+      "label": "短预习",
+      "description": "按显式背景与时长讲通物理主线，保留条件、公式和教材出处。",
+      "icon": "icon.svg"
+    },
+    {
+      "location": "experiment",
+      "object_type": "ExperimentInstance",
+      "activity": "deep",
+      "label": "深入讲义",
+      "description": "补数学基础、逐步推导和物理量映射，回查教材。",
+      "icon": "icon.svg"
+    },
+    {
+      "location": "experiment",
+      "object_type": "ExperimentInstance",
+      "activity": "plan",
+      "label": "实验计划",
+      "description": "目标量到读数、条件、顺序和完成判据；记录、误差、仪器、阅读独立附录。",
+      "icon": "icon.svg"
+    },
+    {
+      "location": "artifact",
+      "object_type": "LearningDocument",
+      "activity": "export",
+      "label": "导出 Word",
+      "description": "生成可编辑原生公式、表格、图像与旁侧来源。",
+      "icon": "icon.svg"
+    }
+  ],
+  "program_language": "format-pipeline/1"
+}

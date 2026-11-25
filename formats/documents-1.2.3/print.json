@@ -1,0 +1,43 @@
+{
+  "font": "Microsoft YaHei",
+  "language": "zh-CN",
+  "page": "A4",
+  "orientation": "portrait",
+  "margins_cm": {
+    "top": 1.2,
+    "bottom": 1.2,
+    "left": 1.4,
+    "right": 1.4
+  },
+  "font_size": 9.5,
+  "line_spacing": 1.15,
+  "paragraph_spacing": 3,
+  "title_size": 16,
+  "heading_size": 11,
+  "subheading_size": 10,
+  "table_font_size": 9,
+  "table_padding_pt": 9,
+  "accent": "285C66",
+  "table_header": "E4ECEB",
+  "table_header_text": "000000",
+  "table_stripe": "F7F9F8",
+  "show_background": false,
+  "flow": [
+    "summary",
+    "sections",
+    "goals",
+    "steps",
+    "warnings",
+    "appendices",
+    "sources"
+  ],
+  "description": "独立现场记录表，横向少留白、纵向留手写空间",
+  "source_font_size": 8,
+  "source_spacing": 2,
+  "table_padding_horizontal_pt": 3,
+  "table_padding_vertical_pt": 8,
+  "sources_layout": "compact",
+  "heading_space_before_pt": 7,
+  "heading_space_after_pt": 4,
+  "title_space_after_pt": 8
+}

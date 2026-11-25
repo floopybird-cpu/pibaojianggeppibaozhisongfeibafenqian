@@ -1,0 +1,38 @@
+{
+  "font": "Microsoft YaHei",
+  "language": "zh-CN",
+  "page": "A4",
+  "orientation": "portrait",
+  "margins_cm": {
+    "top": 1.6,
+    "bottom": 1.6,
+    "left": 1.6,
+    "right": 1.6
+  },
+  "font_size": 11,
+  "line_spacing": 1.35,
+  "paragraph_spacing": 6,
+  "title_size": 23,
+  "heading_size": 15,
+  "subheading_size": 12,
+  "table_font_size": 10,
+  "table_padding_pt": 9,
+  "accent": "285C66",
+  "table_header": "E4ECEB",
+  "table_header_text": "000000",
+  "table_stripe": "F7F9F8",
+  "show_background": false,
+  "flow": [
+    "summary",
+    "sections",
+    "goals",
+    "steps",
+    "warnings",
+    "appendices",
+    "sources"
+  ],
+  "description": "现场记录，较宽正文与更大表格留白",
+  "source_font_size": 8,
+  "source_spacing": 2,
+  "concise_plan": true
+}

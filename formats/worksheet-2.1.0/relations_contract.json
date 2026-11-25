@@ -1,0 +1,653 @@
+{
+  "type": "object",
+  "properties": {
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "expr": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "basis": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "string"
+                    },
+                    "locator": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "page"
+                  ]
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "uncertainty": {
+                  "type": "string"
+                },
+                "digits": {
+                  "type": "integer"
+                },
+                "domain": {
+                  "type": "string",
+                  "enum": [
+                    "signed",
+                    "positive",
+                    "nonnegative",
+                    "fraction"
+                  ]
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "primary",
+                    "intermediate",
+                    "check"
+                  ]
+                },
+                "verification": {
+                  "type": "object",
+                  "properties": {
+                    "equation": {
+                      "type": "string",
+                      "description": "原件闭式的整行等式，含左端符号，保留常数与分母。右端用原符号和可执行的基本算术，原件或独立草稿应有同式。"
+                    },
+                    "bindings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "symbol": {
+                            "type": "string",
+                            "description": "等式右端的原符号"
+                          },
+                          "input": {
+                            "type": "string",
+                            "description": "对应的实际原始输入 id"
+                          },
+                          "meaning": {
+                            "type": "string",
+                            "description": "读数两端、方向、单程或全程等装置定义"
+                          },
+                          "page": {
+                            "type": "string"
+                          },
+                          "quote": {
+                            "type": "string",
+                            "description": "原件中对应该读数含义的一段原文"
+                          },
+                          "operation": {
+                            "type": "string",
+                            "enum": [
+                              "value",
+                              "first",
+                              "last",
+                              "mean",
+                              "slope",
+                              "integral",
+                              "sample_period"
+                            ],
+                            "description": "原符号取端点、拟合或积分时选原件实际方式"
+                          },
+                          "axis": {
+                            "type": "string",
+                            "description": "slope 或 integral 使用的同表横坐标原始读数 id"
+                          }
+                        },
+                        "required": [
+                          "symbol",
+                          "input",
+                          "meaning",
+                          "page",
+                          "quote"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "equation",
+                    "bindings"
+                  ]
+                },
+                "revision_reason": {
+                  "type": "string",
+                  "description": "若改变当前计算图，解释原式或实际测量关系要求这一变化的原因，并由basis给出可定位原句；保留原式时为空。"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "unit",
+                "expr",
+                "basis"
+              ]
+            }
+          },
+          "quantities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "meaning": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "string"
+                },
+                "reference": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "unit",
+                    "quote"
+                  ]
+                },
+                "form": {
+                  "type": "string",
+                  "enum": [
+                    "reading",
+                    "series",
+                    "constant",
+                    "choice",
+                    "observation"
+                  ]
+                },
+                "table": {
+                  "type": "string",
+                  "description": "序列或定性记录实际所在表的 id；同一采样/配置才放同一表"
+                },
+                "table_title": {
+                  "type": "string",
+                  "description": "需要新表时给实际的记录表标题"
+                }
+              },
+              "required": [
+                "id",
+                "page",
+                "meaning"
+              ]
+            }
+          },
+          "windows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "table": {
+                  "type": "string"
+                },
+                "column": {
+                  "type": "string"
+                },
+                "quote": {
+                  "type": "string",
+                  "description": "规定选择连续取数区段的原文"
+                },
+                "min": {
+                  "type": "string",
+                  "description": "真实可填标量 id 或由本配置已声明标量构成的界限表达式，采用 SI"
+                },
+                "max": {
+                  "type": "string",
+                  "description": "真实可填标量 id 或由本配置已声明标量构成的界限表达式，采用 SI"
+                },
+                "page": {
+                  "type": "string"
+                },
+                "locator": {
+                  "type": "string",
+                  "description": "原图中的操作或数据处理条目；文字可读时给 quote"
+                }
+              },
+              "required": [
+                "table",
+                "column",
+                "page"
+              ]
+            }
+          },
+          "derived": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "expr": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "basis": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "string"
+                    },
+                    "locator": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "page"
+                  ]
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "uncertainty": {
+                  "type": "string"
+                },
+                "digits": {
+                  "type": "integer"
+                },
+                "domain": {
+                  "type": "string",
+                  "enum": [
+                    "signed",
+                    "positive",
+                    "nonnegative",
+                    "fraction"
+                  ]
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "primary",
+                    "intermediate",
+                    "check"
+                  ]
+                },
+                "verification": {
+                  "type": "object",
+                  "properties": {
+                    "equation": {
+                      "type": "string",
+                      "description": "原件闭式的整行等式，含左端符号，保留常数与分母。右端用原符号和可执行的基本算术，原件或独立草稿应有同式。"
+                    },
+                    "bindings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "symbol": {
+                            "type": "string",
+                            "description": "等式右端的原符号"
+                          },
+                          "input": {
+                            "type": "string",
+                            "description": "对应的实际原始输入 id"
+                          },
+                          "meaning": {
+                            "type": "string",
+                            "description": "读数两端、方向、单程或全程等装置定义"
+                          },
+                          "page": {
+                            "type": "string"
+                          },
+                          "quote": {
+                            "type": "string",
+                            "description": "原件中对应该读数含义的一段原文"
+                          },
+                          "operation": {
+                            "type": "string",
+                            "enum": [
+                              "value",
+                              "first",
+                              "last",
+                              "mean",
+                              "slope",
+                              "integral",
+                              "sample_period"
+                            ],
+                            "description": "原符号取端点、拟合或积分时选原件实际方式"
+                          },
+                          "axis": {
+                            "type": "string",
+                            "description": "slope 或 integral 使用的同表横坐标原始读数 id"
+                          }
+                        },
+                        "required": [
+                          "symbol",
+                          "input",
+                          "meaning",
+                          "page",
+                          "quote"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "equation",
+                    "bindings"
+                  ]
+                },
+                "series_table": {
+                  "type": "string",
+                  "description": "逐行计算所属的原始采样表 id"
+                },
+                "revision_reason": {
+                  "type": "string",
+                  "description": "若改变当前计算图，解释原式或实际测量关系要求这一变化的原因，并由basis给出可定位原句；保留原式时为空。"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "unit",
+                "expr",
+                "basis",
+                "series_table"
+              ]
+            }
+          },
+          "draft": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "material_pages": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^D[0-9]+p[0-9]+$"
+                }
+              },
+              "purpose": {
+                "type": "string"
+              },
+              "equations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "relation": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string",
+                      "pattern": "^D[0-9]+p[0-9]+$"
+                    },
+                    "conditions": {
+                      "type": "string"
+                    },
+                    "bindings": {
+                      "type": "string",
+                      "description": "原记号如何按装置和操作映射到测量量，需结合哪一幅装置图和哪一个记录步骤"
+                    },
+                    "evidence_pages": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^D[0-9]+p[0-9]+$"
+                      }
+                    },
+                    "targets": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "relation",
+                    "source",
+                    "conditions",
+                    "bindings",
+                    "evidence_pages",
+                    "targets"
+                  ]
+                }
+              },
+              "targets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "可跨草稿和程序稳定引用的物理结果名，用英文标识符"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "computed",
+                        "observation"
+                      ]
+                    },
+                    "meaning": {
+                      "type": "string",
+                      "description": "学生最终用什么量回答哪个课内问题，有向还是大小，是否条件分支"
+                    },
+                    "source": {
+                      "type": "string",
+                      "pattern": "^D[0-9]+p[0-9]+$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label",
+                    "unit",
+                    "kind",
+                    "meaning",
+                    "source"
+                  ]
+                }
+              },
+              "observables": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "form": {
+                      "type": "string",
+                      "enum": [
+                        "reading",
+                        "series",
+                        "constant",
+                        "choice",
+                        "observation"
+                      ]
+                    },
+                    "meaning": {
+                      "type": "string",
+                      "description": "仪器读哪个端点、通道、物体，单次还是总量，源图所示方向与取数时机"
+                    },
+                    "source": {
+                      "type": "string",
+                      "pattern": "^D[0-9]+p[0-9]+$"
+                    },
+                    "derived_from": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "直接读取时为空数组；由其它观测聚合或计算得到时列出输入id。连续记录的每个物理量单独声明，不用一个复合单位代表整表。"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label",
+                    "unit",
+                    "form",
+                    "meaning",
+                    "source"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "material_pages",
+              "purpose",
+              "equations",
+              "targets",
+              "observables"
+            ]
+          }
+        },
+        "required": [
+          "method",
+          "targets",
+          "quantities",
+          "windows"
+        ]
+      }
+    },
+    "draft_points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "definition",
+                    "fact",
+                    "formula",
+                    "procedure"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kind",
+                "text"
+              ]
+            }
+          },
+          "material_plan": {
+            "type": "string"
+          },
+          "interpretations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string"
+                },
+                "emphasis": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "question",
+                "emphasis"
+              ]
+            }
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^D[0-9]+p[0-9]+$"
+            }
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "knowledge",
+          "material_plan",
+          "interpretations",
+          "sources",
+          "id"
+        ]
+      }
+    }
+  },
+  "required": [
+    "pages"
+  ]
+}

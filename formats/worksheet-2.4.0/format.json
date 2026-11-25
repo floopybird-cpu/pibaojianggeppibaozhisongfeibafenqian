@@ -1,0 +1,42 @@
+{
+  "id": "physics.worksheet",
+  "version": "2.4.0",
+  "data_version": 1,
+  "runtime_version": 1,
+  "object_types": [
+    "ExperimentWorksheet"
+  ],
+  "entries": {
+    "read": "program.json#read",
+    "query": "program.json#query",
+    "apply": "program.json#apply",
+    "build": "program.json#build",
+    "finish": "program.json#finish",
+    "planUpgrade": "program.json#planUpgrade",
+    "upgrade": "program.json#upgrade"
+  },
+  "dependencies": {},
+  "execution": "bounded_declarative",
+  "resources": [
+    "icon.svg",
+    "schema.json",
+    "program.json",
+    "authoring.md",
+    "outline_contract.json",
+    "measurement_draft.md",
+    "page_contract.json",
+    "relations.md",
+    "relations_contract.json"
+  ],
+  "ui": [
+    {
+      "location": "experiment",
+      "object_type": "ExperimentInstance",
+      "activity": "worksheet",
+      "label": "数据处理台",
+      "description": "按本次讲义生成可填写和计算的实验页",
+      "icon": "icon.svg"
+    }
+  ],
+  "program_language": "format-pipeline/1"
+}

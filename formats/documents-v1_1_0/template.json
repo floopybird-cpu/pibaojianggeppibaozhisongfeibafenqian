@@ -1,0 +1,17 @@
+{
+  "composition": "markdown-layout/1",
+  "defaults": {
+    "short": "reading",
+    "deep": "classic",
+    "plan": "worksheet"
+  },
+  "themes": {
+    "reading": "reading.json",
+    "worksheet": "worksheet.json",
+    "classic": "classic.json"
+  },
+  "pdf": {
+    "css": "",
+    "renderer": "typst"
+  }
+}

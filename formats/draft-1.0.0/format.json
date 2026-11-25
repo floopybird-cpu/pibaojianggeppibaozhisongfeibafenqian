@@ -1,0 +1,37 @@
+{
+  "id": "physics.draft",
+  "version": "1.0.0",
+  "data_version": 1,
+  "runtime_version": 1,
+  "object_types": [
+    "ExperimentDraft"
+  ],
+  "entries": {
+    "read": "program.json#read",
+    "query": "program.json#query",
+    "apply": "program.json#apply",
+    "build": "program.json#build",
+    "finish": "program.json#finish",
+    "planUpgrade": "program.json#planUpgrade",
+    "upgrade": "program.json#upgrade"
+  },
+  "dependencies": {},
+  "execution": "bounded_declarative",
+  "resources": [
+    "icon.svg",
+    "schema.json",
+    "program.json",
+    "examples.md"
+  ],
+  "ui": [
+    {
+      "location": "experiment",
+      "object_type": "ExperimentInstance",
+      "activity": "outline",
+      "label": "实验草稿",
+      "description": "先梳理从预习到数据处理的主线、知识与选材，区分定义和诠释，再按草稿展开。",
+      "icon": "icon.svg"
+    }
+  ],
+  "program_language": "format-pipeline/1"
+}

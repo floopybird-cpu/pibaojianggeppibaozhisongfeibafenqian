@@ -1,0 +1,165 @@
+{
+  "type": "object",
+  "properties": {
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "expr": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                },
+                "basis": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "string"
+                    },
+                    "locator": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "page"
+                  ]
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "uncertainty": {
+                  "type": "string"
+                },
+                "digits": {
+                  "type": "integer"
+                },
+                "domain": {
+                  "type": "string",
+                  "enum": [
+                    "signed",
+                    "positive",
+                    "nonnegative",
+                    "fraction"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "unit",
+                "expr",
+                "basis"
+              ]
+            }
+          },
+          "quantities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "meaning": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "string"
+                },
+                "reference": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "unit",
+                    "quote"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "page",
+                "meaning"
+              ]
+            }
+          },
+          "windows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "table": {
+                  "type": "string"
+                },
+                "column": {
+                  "type": "string"
+                },
+                "min": {
+                  "type": "string"
+                },
+                "max": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "table",
+                "column",
+                "page"
+              ]
+            }
+          }
+        },
+        "required": [
+          "method",
+          "targets",
+          "quantities",
+          "windows"
+        ]
+      }
+    }
+  },
+  "required": [
+    "pages"
+  ]
+}

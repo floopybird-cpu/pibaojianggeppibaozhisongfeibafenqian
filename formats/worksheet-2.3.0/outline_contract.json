@@ -1,0 +1,336 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "source_strategy": {
+      "type": "string"
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "prestudy",
+              "procedure",
+              "recording",
+              "analysis"
+            ]
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "knowledge": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "definition",
+                          "fact",
+                          "formula",
+                          "procedure"
+                        ]
+                      },
+                      "text": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "material_plan": {
+                  "type": "string"
+                },
+                "interpretations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "question": {
+                        "type": "string"
+                      },
+                      "emphasis": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "question",
+                      "emphasis"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^D[0-9]+p[0-9]+$"
+                  }
+                }
+              },
+              "required": [
+                "title",
+                "knowledge",
+                "material_plan",
+                "interpretations",
+                "sources"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "key",
+          "points"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "formula_pages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^D[0-9]+p[0-9]+$"
+      }
+    },
+    "requested_method": {
+      "type": "string",
+      "description": "用户明确想先操作的方法 id；请求整个实验时为空字符串"
+    },
+    "experiments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "material_pages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^D[0-9]+p[0-9]+$"
+            }
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "equations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "relation": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string",
+                  "pattern": "^D[0-9]+p[0-9]+$"
+                },
+                "conditions": {
+                  "type": "string"
+                },
+                "bindings": {
+                  "type": "string",
+                  "description": "原记号如何按装置和操作映射到测量量，需结合哪一幅装置图和哪一个记录步骤"
+                },
+                "evidence_pages": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^D[0-9]+p[0-9]+$"
+                  }
+                },
+                "targets": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "relation",
+                "source",
+                "conditions",
+                "bindings",
+                "evidence_pages",
+                "targets"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "可跨草稿和程序稳定引用的物理结果名，用英文标识符"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "computed",
+                    "observation"
+                  ]
+                },
+                "meaning": {
+                  "type": "string",
+                  "description": "学生最终用什么量回答哪个课内问题，有向还是大小，是否条件分支"
+                },
+                "source": {
+                  "type": "string",
+                  "pattern": "^D[0-9]+p[0-9]+$"
+                },
+                "components": {
+                  "type": "array",
+                  "description": "成组输出显式列出全部分量；单个结果使用空数组。",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "该分量随后使用的计算结果标识，与页面结果 id 一致。"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      },
+                      "meaning": {
+                        "type": "string",
+                        "description": "学生最终用什么量回答哪个课内问题，有向还是大小，是否条件分支"
+                      },
+                      "source": {
+                        "type": "string",
+                        "pattern": "^D[0-9]+p[0-9]+$"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "unit",
+                      "meaning",
+                      "source"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "unit",
+                "kind",
+                "meaning",
+                "source"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "observables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "form": {
+                  "type": "string",
+                  "enum": [
+                    "reading",
+                    "series",
+                    "constant",
+                    "choice",
+                    "observation"
+                  ]
+                },
+                "meaning": {
+                  "type": "string",
+                  "description": "仪器读哪个端点、通道、物体，单次还是总量，源图所示方向与取数时机"
+                },
+                "source": {
+                  "type": "string",
+                  "pattern": "^D[0-9]+p[0-9]+$"
+                },
+                "derived_from": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "直接读取时为空数组；由其它观测聚合或计算得到时列出输入id。连续记录的每个物理量单独声明，不用一个复合单位代表整表。"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "unit",
+                "form",
+                "meaning",
+                "source"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "material_pages",
+          "purpose",
+          "equations",
+          "targets",
+          "observables"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "title",
+    "purpose",
+    "source_strategy",
+    "stages",
+    "formula_pages",
+    "requested_method",
+    "experiments"
+  ],
+  "additionalProperties": false
+}

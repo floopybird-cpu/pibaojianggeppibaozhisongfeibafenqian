@@ -1,0 +1,158 @@
+{
+  "ExperimentDraft": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "purpose": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_strategy": {
+        "type": "string",
+        "minLength": 1
+      },
+      "stages": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scope": {
+              "enum": [
+                "overview",
+                "developed"
+              ]
+            },
+            "points": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "knowledge": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "enum": [
+                            "definition",
+                            "fact",
+                            "formula",
+                            "procedure"
+                          ]
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "text"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "minItems": 1
+                  },
+                  "material_plan": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "interpretations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "question": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "emphasis": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "question",
+                        "emphasis"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "depends_on": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "knowledge",
+                  "material_plan",
+                  "interpretations"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "key",
+            "title",
+            "scope",
+            "points"
+          ],
+          "additionalProperties": false
+        },
+        "minItems": 4
+      },
+      "request": {
+        "type": "object"
+      },
+      "sources": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "x-source-anchor": true
+        }
+      },
+      "delivery_requests": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required": [
+      "title",
+      "purpose",
+      "source_strategy",
+      "stages",
+      "request"
+    ],
+    "additionalProperties": false
+  }
+}
