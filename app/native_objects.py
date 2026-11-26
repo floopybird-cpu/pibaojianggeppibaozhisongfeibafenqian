@@ -6,20 +6,33 @@ import re
 from pathlib import Path
 from PySide6 import QtCore as C, QtGui as G, QtWidgets as W
 
-from .native_widgets import KINDS,STATUS,label,button,row,plain,text,table,MathLabel,ImageView,scroll_body,export_file,export_bundle
+from .native_widgets import KINDS,STATUS,label,button,row,plain,text,table,MathLabel,ImageView,scroll_body,clear,export_file,export_bundle
 from .display_text import goal_labels,display_unit
+
+
+def local_stamp(value):
+    from datetime import datetime
+    try:return datetime.fromisoformat(str(value)).astimezone().strftime("%m-%d %H:%M")
+    except Exception:return str(value)[:16]
 
 
 class ObjectDialog(W.QDialog):
     def __init__(self,ui,identity,revision=None):
         super().__init__(None);self.ui=ui;self.identity=identity;self.object=ui.app.gateway.read(identity,revision)
-        self.setWindowTitle(self.object["title"]);self.resize(1120,880);self.layout=W.QVBoxLayout(self)
+        self.setWindowTitle(self.title_text());self.resize(1120,880);self.layout=W.QVBoxLayout(self)
         self.toolbar=W.QHBoxLayout();self.layout.addLayout(self.toolbar)
         self.toolbar.addWidget(label(KINDS.get(self.object["kind"],self.object["kind"])))
-        self.versions=W.QComboBox()
-        for rev in self.object["history"]:self.versions.addItem(f"r{rev['revision']} · 包 {rev['pack_version']} · {rev['created'][:19]}",rev["revision"])
-        self.versions.setCurrentIndex(self.versions.findData(self.object["revision"]));self.toolbar.addWidget(self.versions)
-        self.toolbar.addWidget(button("更新版本",self.upgrade));self.toolbar.addWidget(button("查看最新修订",self.latest_revision));self.toolbar.addStretch()
+        self.versions=W.QComboBox();self.versions.setMinimumWidth(180)
+        self.versions.setSizeAdjustPolicy(W.QComboBox.AdjustToContents)
+        self.versions.currentIndexChanged.connect(self.change_version)
+        self.toolbar.addWidget(self.versions)
+        self.version_note=label("","muted");self.version_note.setStyleSheet("color:#a4630f;");self.toolbar.addWidget(self.version_note)
+        self.back_latest=button("回到最新版",self.latest_revision)
+        self.back_latest.setToolTip("最新修订可能是按新格式重算，或你后来人工修改的版本")
+        self.toolbar.addWidget(self.back_latest)
+        upgrade=button("按当前格式重算",self.upgrade)
+        upgrade.setToolTip("用当前固定格式包重新生成一版；人工修改保留在原修订里，可随时切回")
+        self.toolbar.addWidget(upgrade);self.toolbar.addStretch()
         self.actions=W.QHBoxLayout();self.layout.addLayout(self.actions)
         if self.object["experiment_id"] or self.object["kind"]=="DataWorkbook":
             self.actions.addWidget(button("产物文件夹",lambda:self.open_product("folder")))
@@ -29,20 +42,57 @@ class ObjectDialog(W.QDialog):
             pdf=button("阅读 PDF (Alt+P)",self.show_pdf);pdf.setShortcut(G.QKeySequence('Alt+P'));pdf.setToolTip('在本窗口阅读完整排版PDF');self.actions.addWidget(pdf)
         self.actions.addWidget(button("导出完整成果",lambda:self.ui.safe(lambda:export_bundle(self,self.object))))
         if self.object["kind"] in ("LearningDocument","AnalysisProgram","SciencePoint") and self.object["package_state"]=="ready":self.actions.addWidget(button("编辑并另存修订",self.edit))
-        self.versions.currentIndexChanged.connect(self.change_version)
         self.split=W.QSplitter();self.layout.addWidget(self.split,1);self.navigator=W.QListWidget();self.navigator.setMaximumWidth(215);self.split.addWidget(self.navigator)
         self.scroll,self.body,self.content=scroll_body();self.read_tabs=W.QTabWidget();self.read_tabs.addTab(self.scroll,"内容与出处");self.split.addWidget(self.read_tabs);self.split.setSizes([195,880]);self.targets={}
         self.navigator.currentItemChanged.connect(self.navigate)
+        self.fill_versions()
         self.render()
         if self.object["kind"]=="LearningDocument":self.load_pdf()
 
-    def latest_revision(self):
-        latest=self.ui.app.gateway.read(self.identity)
+    def title_text(self):
+        title=self.object["title"]
+        if getattr(self,"latest",None) and self.object["revision"]!=self.latest:return title+f"　·　r{self.object['revision']} 旧版"
+        return title+f"　·　r{self.object['revision']}"
+
+    def fill_versions(self):
+        try:latest=self.ui.app.gateway.read(self.identity)
+        except Exception:latest=self.object
+        self.latest=latest["revision"]
+        history=latest.get("history") or self.object.get("history") or []
         self.versions.blockSignals(True);self.versions.clear()
-        for rev in latest['history']:
-            self.versions.addItem(f"r{rev['revision']} · 包 {rev['pack_version']} · {rev['created'][:19]}",rev['revision'])
-        self.versions.setCurrentIndex(self.versions.findData(latest['revision']));self.versions.blockSignals(False)
-        self.change_version()
+        for rev in sorted(history,key=lambda item:item["revision"],reverse=True):
+            caption=f"r{rev['revision']} · {local_stamp(rev['created'])}"+(" · 最新" if rev["revision"]==self.latest else "")
+            self.versions.addItem(caption,rev["revision"])
+        self.versions.setCurrentIndex(self.versions.findData(self.object["revision"]))
+        self.versions.blockSignals(False)
+        current=self.object["revision"]
+        self.version_note.setText("" if current==self.latest else f"旧版 r{current} · 最新 r{self.latest}")
+        self.back_latest.setVisible(current!=self.latest)
+        self.setWindowTitle(self.title_text())
+
+    def load(self,revision=None):
+        try:self.object=self.ui.app.gateway.read(self.identity,revision)
+        except Exception as exc:
+            self.ui.notify(self.ui.app.settings.redact(str(exc)),error=True);self.fill_versions();return
+        clear(self.content);self.navigator.clear();self.targets={}
+        if hasattr(self,"reading_snapshot"):del self.reading_snapshot
+        self.drop_pdf()
+        self.render()
+        self.fill_versions()
+        if self.object["kind"]=="LearningDocument":self.load_pdf()
+        self.read_tabs.setCurrentWidget(self.scroll)
+        self.scroll.verticalScrollBar().setValue(0)
+
+    def drop_pdf(self):
+        for attribute in ("pdf_reader","pdf_request"):
+            widget=getattr(self,attribute,None)
+            if widget is None:continue
+            index=self.read_tabs.indexOf(widget)
+            if index>=0:self.read_tabs.removeTab(index)
+            widget.setParent(None);widget.deleteLater();delattr(self,attribute)
+
+    def latest_revision(self):
+        self.load(None)
 
     def show_pdf(self):
         if hasattr(self,'pdf_reader'):self.read_tabs.setCurrentWidget(self.pdf_reader)
@@ -53,6 +103,7 @@ class ObjectDialog(W.QDialog):
 
     def load_pdf(self):
         from .native_products import PdfReader
+        self.drop_pdf()
         asset=next((a for a in self.object["assets"] if a["name"]=="document.pdf"),None)
         path=self.ui.app.store.asset_path(asset["path"]) if asset else None
         if path is None:
@@ -62,7 +113,8 @@ class ObjectDialog(W.QDialog):
         if path and path.is_file():
             self.pdf_reader=PdfReader(path,self);self.read_tabs.insertTab(0,self.pdf_reader,"排版阅读 PDF");self.read_tabs.setCurrentIndex(0)
         else:
-            self.toolbar.addWidget(button("生成 PDF 阅读版",lambda:self.ui.submit("生成完整 PDF",lambda:self.ui.app.publications.publish(self.object),lambda _:self.load_pdf())))
+            self.pdf_request=button("生成 PDF 阅读版",lambda:self.ui.submit("生成完整 PDF",lambda:self.ui.app.publications.publish(self.object),lambda _:self.load_pdf()))
+            self.pdf_request.setProperty("quiet",True);self.toolbar.addWidget(self.pdf_request)
     def heading(self,text_value,identity=None,level=1):
         widget=self.prose_label(text_value,"h2" if level==1 else "h3");self.content.addWidget(widget)
         if identity:
@@ -355,16 +407,19 @@ class ObjectDialog(W.QDialog):
         if result:self.ui.notify("隔离运行已启动，将保留输入、参数、图和原始错误。 ");self.ui.refresh_session();self.accept()
     def change_version(self):
         revision=self.versions.currentData()
-        if revision==self.object["revision"]:return
-        identity=self.identity;self.accept();self.ui.open_object(identity,revision)
+        if revision is None or revision==self.object["revision"]:return
+        self.load(revision)
     def upgrade(self):
         plan=self.ui.safe(lambda:self.ui.app.gateway.plan_upgrade(self.identity))
         if not plan:return
         message=f"{plan['old_version']} → {plan['target_version']}\n{plan['reason']}\n人工修改：{'有，将保留原内容' if plan['human_modified'] else '未记录'}"
-        if not plan["can_upgrade"]:W.QMessageBox.information(self,"更新版本",message);return
-        if W.QMessageBox.question(self,"确认固定升级方案",message+"\n按此方案重生成新修订？")!=W.QMessageBox.Yes:return
-        self.ui.submit("按包升级",lambda:self.ui.app.gateway.upgrade(self.identity,plan,True),lambda obj:(self.accept(),self.ui.open_object(obj["id"])))
-    def edit(self):EditDialog(self.ui,self.object).exec();self.ui.refresh()
+        if not plan["can_upgrade"]:W.QMessageBox.information(self,"按当前格式重算",message);return
+        if W.QMessageBox.question(self,"确认固定升级方案",message+"\n按此方案重生成新修订？旧修订会保留，可随时切回。")!=W.QMessageBox.Yes:return
+        self.ui.submit("按包升级",lambda:self.ui.app.gateway.upgrade(self.identity,plan,True),lambda obj:(self.load(None),self.ui.refresh_session()))
+    def edit(self):
+        on_latest=self.object["revision"]==getattr(self,"latest",self.object["revision"])
+        EditDialog(self.ui,self.object).exec();self.ui.refresh()
+        self.load(None) if on_latest else self.fill_versions()
 
 
 class EditDialog(W.QDialog):

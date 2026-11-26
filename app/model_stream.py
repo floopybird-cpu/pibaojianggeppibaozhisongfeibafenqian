@@ -5,6 +5,11 @@ import json
 import re
 
 
+class StreamInterrupted(RuntimeError):
+    """A reply that broke off in transit. Nothing from it has been executed, so
+    the whole request can be sent again without duplicating any work."""
+
+
 def event_lines(chunks):
     decoder=codecs.getincrementaldecoder('utf-8-sig')()
     parts=[];after_cr=False
@@ -43,7 +48,7 @@ def sse_events(chunks,state):
     state['eof']=True
     if data:
         state['unterminated_event']=True
-        raise ValueError('模型流事件未以空行结束；已保留收到的字节，未执行工具')
+        raise StreamInterrupted('模型流事件未以空行结束；已保留收到的字节，未执行工具')
 
 
 def _text(value,label):
@@ -169,7 +174,7 @@ def consume_sse(response,protocol,progress,partial):
             if not isinstance(event,dict):raise ValueError('模型流事件必须是 JSON 对象')
             if event.get('usage') is not None:usage=event['usage']
             partial['usage']=usage
-            if event.get('error'):raise ValueError('模型流返回错误：'+str(event['error']))
+            if event.get('error'):raise StreamInterrupted('模型流返回错误：'+str(event['error']))
             if protocol=='responses':
                 kind=event.get('type') or name
                 state.setdefault('event_types',{})[kind]=state.get('event_types',{}).get(kind,0)+1
@@ -195,7 +200,7 @@ def consume_sse(response,protocol,progress,partial):
                 if delta.get('content') or message.get('content'):progress('模型正在撰写回复')
                 if delta.get('tool_calls') or message.get('tool_calls'):progress('模型正在准备操作')
         if protocol=='responses':
-            if final is None:raise ValueError('模型返回流中断，未取得完整结束回执；未执行其中的工具')
+            if final is None:raise StreamInterrupted('模型返回流中断，未取得完整结束回执；未执行其中的工具')
             if usage is not None and not final.get('usage'):final={**final,'usage':usage}
             state['completion_basis']='responses_terminal_event';state['complete']=True
             return final

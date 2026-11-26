@@ -14,6 +14,8 @@ from contextlib import contextmanager
 from urllib import request, parse, error
 import xml.etree.ElementTree as ET
 
+from .model_stream import StreamInterrupted
+
 
 def public_url(url):
     parsed = parse.urlsplit(url)
@@ -198,10 +200,13 @@ class ModelClient:
                 if read_error:reason+='；错误响应读取中断：'+self.settings.redact(str(read_error))
                 finish('rejected',reason,state='http_error' if read_error is None else 'http_error_interrupted')
                 raise ProviderHTTPError(exc.code,reason) from None
-            except (error.URLError,ssl.SSLError,ConnectionError,TimeoutError,IncompleteRead) as exc:
+            except (error.URLError,ssl.SSLError,ConnectionError,TimeoutError,IncompleteRead,StreamInterrupted) as exc:
                 # No tools have been executed from this incomplete response.
                 # Recover a transient connection drop without restarting the
                 # whole experiment or discarding already saved artifacts.
+                # The provider's own stream failures (an error event, or a reply
+                # that stops before its finish reason) are retried the same way:
+                # nothing from such a reply can have been executed.
                 reason=self.settings.redact(str(exc))
                 if result is not None and partial.get('transport',{}).get('complete'):
                     # A failure while closing an already completed response must
@@ -213,8 +218,8 @@ class ModelClient:
                     if is_cancelled:raise InterruptedError('用户取消了当前模型返回') from None
                     if attempt<2:
                         if runtime:runtime.request_progress(identity,'连接中断，正在重新请求完整回复')
-                        time.sleep(attempt+1);continue
-                    raise ValueError("模型连接暂时失败，自动重试后仍未收到完整回复。已保存的文稿、数据和问题仍保留，可以稍后继续当前任务。") from None
+                        time.sleep(3 if attempt==0 else 8);continue
+                    raise ValueError("模型连接暂时失败，自动重试后仍未收到完整回复。已保存的文稿、数据和问题仍保留，可以稍后继续当前任务；服务商侧流式响应不稳时，把思考深度调低能缩短单次回复、减少中断。") from None
             except Exception as exc:
                 finish('unknown',self.settings.redact(str(exc)),state='cancelled' if isinstance(exc,InterruptedError) else 'parse_error')
                 if isinstance(exc,InterruptedError):raise

@@ -297,7 +297,7 @@ class FormatGateway:
                 if current:
                     conn.execute("UPDATE objects SET revision=?,title=? WHERE id=?", (revision, content["title"], identity))
                 else:
-                    conn.execute("INSERT INTO objects VALUES(?,?,?,?,?,?)", (identity, kind, experiment_id, revision, content["title"], now()))
+                    conn.execute("INSERT INTO objects(id,kind,experiment_id,revision,title,created) VALUES(?,?,?,?,?,?)", (identity, kind, experiment_id, revision, content["title"], now()))
                 conn.execute("INSERT INTO revisions VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", (identity, revision, kind, pack_id, pack["version"], pack["digest"],
                              pack["data_version"], canonical(content), canonical(sources), canonical(assets), digest(canonical(content)) if human else (previous or {}).get("human_baseline"), now()))
                 from . import knowledge_index as kb

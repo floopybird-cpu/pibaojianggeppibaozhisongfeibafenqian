@@ -424,7 +424,7 @@ class Agent:
         if name == "list_library_sources":
             query=str(args.get("query", "")).strip().casefold()
             selected=set(self.store.experiment(experiment_id)["source_ids"]) if experiment_id else set(allowed_sources)
-            rows=self.store.all("SELECT s.id,s.name,s.kind,s.metadata,s.created,(SELECT COUNT(*) FROM pages p WHERE p.source_id=s.id) AS page_count FROM sources s ORDER BY s.created DESC")
+            rows=self.store.all("SELECT s.id,s.name,s.kind,s.metadata,s.created,(SELECT COUNT(*) FROM pages p WHERE p.source_id=s.id) AS page_count FROM sources s WHERE s.archived='' ORDER BY s.created DESC")
             found=[{"id":r["id"],"name":r["name"],"kind":r["kind"],"page_count":r["page_count"],"selected":r["id"] in selected,"imported":r["created"],"origin":json.loads(r["metadata"]).get("origin", "")}
                    for r in rows if r["kind"] != "zip" and (not query or query in r["name"].casefold())]
             from .record_context import source_records
@@ -606,7 +606,7 @@ class Agent:
                     path=self.store.originals/(source_id+".json");path.write_bytes(receipt)
                     metadata={"origin":"公开联网补充","provider":"原生 Search / Fetch API","url":url,"accessed":now(),"license":"公开可读，分发权待确认","content_available":bool(item.get("content"))}
                     with self.store.transaction() as conn:
-                        conn.execute("INSERT INTO sources VALUES(?,?,?,?,?,?,?)",(source_id,sha,item.get("title") or url,"web",str(path.relative_to(self.store.authority)),now(),canonical(metadata)))
+                        conn.execute("INSERT INTO sources(id,sha,name,kind,original,created,metadata) VALUES(?,?,?,?,?,?,?)",(source_id,sha,item.get("title") or url,"web",str(path.relative_to(self.store.authority)),now(),canonical(metadata)))
                         warnings=[] if item.get("content") else ["原生搜索仅返回摘要，原文仍需继续核查"]
                         conn.execute("INSERT INTO pages VALUES(?,1,'原生联网来源',?,NULL,?)",(source_id,text,canonical(warnings)))
                 anchor=self.materials.make_anchor(source_id,1)
@@ -625,7 +625,7 @@ class Agent:
                 path.write_bytes(raw)
                 metadata = {"origin":"公开联网补充", "url":url, "accessed":now(), "license":"公开可读，不自动授予分发权"}
                 with self.store.transaction() as conn:
-                    conn.execute("INSERT INTO sources VALUES(?,?,?,?,?,?,?)",(source_id,sha,url,"web",str(path.relative_to(self.store.authority)),now(),canonical(metadata)))
+                    conn.execute("INSERT INTO sources(id,sha,name,kind,original,created,metadata) VALUES(?,?,?,?,?,?,?)",(source_id,sha,url,"web",str(path.relative_to(self.store.authority)),now(),canonical(metadata)))
                     conn.execute("INSERT INTO pages VALUES(?,1,'网页',?,NULL,'[]')",(source_id,text))
             anchor = self.materials.make_anchor(source_id,1,text[:350])
             return {"text":text,"source":anchor,"notice":"公开联网补充，不能替代当前课程的仪器规范"}

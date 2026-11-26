@@ -44,7 +44,9 @@ def row(*widgets):
 def clear(layout):
     while layout.count():
         item=layout.takeAt(0)
-        if item.widget():item.widget().deleteLater()
+        widget=item.widget()
+        if widget:
+            widget.setParent(None);widget.deleteLater()
         elif item.layout():clear(item.layout())
 
 

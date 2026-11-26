@@ -58,6 +58,67 @@ QToolTip {background:white;color:#3b633a;border:1px solid #becfae;padding:7px;}
 STYLE += home_styles()
 
 
+TOOL_STAGES={
+    "open_measurement_workbench":"建立数据处理台","source_page_index":"查看原页目录",
+    "read_source_pages":"读取讲义原页","figure_regions":"提取原页插图",
+    "read_experiment_draft":"读取实验草稿","submit_experiment_draft":"整理实验草稿",
+    "checkpoint_context":"记录阶段进度","discover_tools":"查找可用工具",
+    "read_batch":"并行读取资料","apply_artifact_edits":"修改成果",
+    "append_document_sections":"写入文稿章节","inspect_dataset":"检查实验数据",
+    "read_imported_data":"读取导入数据","associate_imported_data":"关联实验数据",
+    "read_tool_result":"回读已保存的结果","ask_user":"向你确认事实",
+    "inspect_measurement_notes":"核对零散笔记","submit_data_workbook":"整理规范数据表",
+    "read_data_workbook":"读取规范数据表","resolve_data_issue":"更正数据疑点",
+    "resolve_data_reference":"定位所指的数据","list_library_sources":"检索资料库",
+    "update_experiment_context":"记录实验要求","select_experiment_sources":"登记参考资料",
+    "find_knowledge_topics":"查找知识主题","search_knowledge":"检索知识条目",
+    "read_knowledge":"核对知识原文","read_format_contract":"查阅格式规范",
+    "list_saved_artifacts":"查看已有成果","list_task_contexts":"回看先前任务",
+    "reference_prior_task":"接续先前任务","list_products":"列出可拿走的产物",
+    "publish_artifacts":"导出成果文件","open_product":"打开产物",
+    "find_artifact_text":"定位成果文字","edit_artifact":"精确修改成果",
+    "plan_artifact_upgrade":"预览格式升级","upgrade_artifact":"升级成果格式",
+    "read_page":"查看原页","view_page":"核对原页图像",
+    "review_document_content":"对照原件核对文稿",
+}
+
+REQUEST_PHASES={
+    "连接模型":"正在连接模型","模型正在接收回复":"正在接收模型回复",
+    "模型正在思考":"模型正在思考","模型正在生成内容":"模型正在生成内容",
+    "模型正在撰写回复":"模型正在撰写回复","模型正在准备操作":"模型正在准备下一步操作",
+    "连接中断，正在重新请求完整回复":"连接中断，正在重新请求",
+    "已返回":"模型已返回，正在整理结果",
+}
+
+
+def seconds_between(start,finish):
+    from datetime import datetime,timezone
+    try:
+        first,second=datetime.fromisoformat(str(start)),datetime.fromisoformat(str(finish))
+    except Exception:return None
+    if first.tzinfo is None:first=first.replace(tzinfo=timezone.utc)
+    if second.tzinfo is None:second=second.replace(tzinfo=timezone.utc)
+    return max(0,int((second-first).total_seconds()))
+
+
+def human_seconds(seconds):
+    if seconds is None:return ""
+    if seconds<60:return f"{seconds} 秒"
+    if seconds<3600:return f"{seconds//60} 分 {seconds%60} 秒"
+    return f"{seconds//3600} 小时 {(seconds%3600)//60} 分"
+
+
+def elapsed_text(start):
+    from datetime import datetime,timezone
+    if not start:return ""
+    return human_seconds(seconds_between(start,datetime.now(timezone.utc).isoformat()))
+
+
+def span_text(start,finish):
+    return human_seconds(seconds_between(start,finish))
+
+
+
 class Dispatch(C.QObject):
     finished=C.Signal(object,object,object)
 
@@ -65,6 +126,7 @@ class Dispatch(C.QObject):
 class MainWindow(W.QMainWindow):
     def __init__(self,app):
         super().__init__();self.app=app;self.current_exp=None;self.state={};self.last_fingerprint="";self.session_fingerprint="";self.working=0
+        self.show_archived=False;self.archived_toggles=[]
         self.reader_windows=set()
         self.worksheet_pending={}
         from . import __version__
@@ -146,15 +208,20 @@ class MainWindow(W.QMainWindow):
         self.refresh()
     def build_experiments(self):
         layout=self.page("experiments","我的实验","")
-        layout.addWidget(button("新建实验",lambda:ExperimentDialog(self).exec(),True),0,C.Qt.AlignLeft)
-        self.experiments=W.QListWidget();self.experiments.setObjectName("experimentList");self.experiments.setSpacing(3);self.experiments.itemDoubleClicked.connect(lambda item:self.open_experiment(item.data(C.Qt.UserRole)));layout.addWidget(self.experiments,1)
+        toggle=W.QCheckBox("显示已归档");toggle.toggled.connect(self.toggle_archived);self.archived_toggles.append(toggle)
+        layout.addWidget(row(button("新建实验",lambda:ExperimentDialog(self).exec(),True),toggle),0,C.Qt.AlignLeft)
+        self.experiments=W.QListWidget();self.experiments.setObjectName("experimentList");self.experiments.setSpacing(3);self.experiments.itemDoubleClicked.connect(lambda item:self.open_experiment(item.data(C.Qt.UserRole)))
+        self.experiments.setContextMenuPolicy(C.Qt.CustomContextMenu);self.experiments.customContextMenuRequested.connect(self.experiment_menu);layout.addWidget(self.experiments,1)
         self.experiment_open=button("打开所选实验",lambda:self.open_experiment(self.experiments.currentItem().data(C.Qt.UserRole)) if self.experiments.currentItem() else None)
-        layout.addWidget(self.experiment_open,0,C.Qt.AlignLeft)
+        layout.addWidget(row(self.experiment_open,button("归档所选",lambda:self.archive_entry("experiment",self.selected_experiment())),button("删除所选…",lambda:self.remove_entry("experiment",self.selected_experiment()))),0,C.Qt.AlignLeft)
     def build_library(self):
         layout=self.page("library","资料与知识","");self.resource_tabs(layout,0)
         layout.addWidget(row(button("＋ 导入资料",self.import_files,True),button("查看原页",self.selected_source),button("已整理的数据表",self.open_data_workbooks),button("全部生成文件",lambda:self.open_products())))
-        layout.addWidget(label("选中一份资料可整理知识或数据，双击可查看原页。","muted"));self.library_activities=W.QHBoxLayout();layout.addLayout(self.library_activities)
-        self.sources=self.data_table(["资料","类型","页数","来源"]);self.sources.itemDoubleClicked.connect(lambda _:self.selected_source());self.sources.itemSelectionChanged.connect(self.update_library_actions);layout.addWidget(self.sources,3)
+        layout.addWidget(label("选中一份资料可整理知识或数据，双击可查看原页。右键可归档或删除。","muted"));self.library_activities=W.QHBoxLayout();layout.addLayout(self.library_activities)
+        toggle=W.QCheckBox("显示已归档");toggle.toggled.connect(self.toggle_archived);self.archived_toggles.append(toggle)
+        layout.addWidget(row(button("归档所选资料",lambda:self.archive_entry("source",self.selected_id(self.sources))),button("删除所选资料…",lambda:self.remove_entry("source",self.selected_id(self.sources))),toggle),0,C.Qt.AlignLeft)
+        self.sources=self.data_table(["资料","类型","页数","来源"]);self.sources.itemDoubleClicked.connect(lambda _:self.selected_source());self.sources.itemSelectionChanged.connect(self.update_library_actions)
+        self.sources.setContextMenuPolicy(C.Qt.CustomContextMenu);self.sources.customContextMenuRequested.connect(self.source_menu);layout.addWidget(self.sources,3)
     def update_library_actions(self):
         selected=bool(self.selected_id(self.sources))
         for index in range(self.library_activities.count()):
@@ -175,9 +242,12 @@ class MainWindow(W.QMainWindow):
         self.kind.currentIndexChanged.connect(self.refresh_knowledge)
         self.describe_button=button("补建条目说明",self.describe_selected);self.describe_button.setEnabled(False)
         layout.addWidget(row(self.search,self.kind,button("搜索",self.refresh_knowledge,True),self.describe_button,button("管理动态目录",lambda:CategoryDialog(self).exec())))
+        toggle=W.QCheckBox("显示已归档");toggle.toggled.connect(self.toggle_archived);self.archived_toggles.append(toggle)
+        layout.addWidget(row(button("归档所选知识",lambda:self.archive_entry("object",self.selected_id(self.points))),button("删除所选知识…",lambda:self.remove_entry("object",self.selected_id(self.points))),toggle),0,C.Qt.AlignLeft)
         split=W.QSplitter();self.categories=W.QTreeWidget();self.categories.setObjectName("knowledgeTree");self.categories.setHeaderLabel("知识目录");self.categories.itemClicked.connect(self.refresh_knowledge)
         self.points=self.data_table(["知识","检索说明","来源与文件页","类型","修订"]);self.points.itemDoubleClicked.connect(lambda _:self.selected_point())
         self.points.itemSelectionChanged.connect(self.update_description_action)
+        self.points.setContextMenuPolicy(C.Qt.CustomContextMenu);self.points.customContextMenuRequested.connect(self.point_menu)
         layout.addWidget(label("选择目录可浏览条目，双击知识可查看正文和出处。","muted"))
         split.setHandleWidth(5);split.addWidget(self.categories);split.addWidget(self.points);split.setSizes([220,900]);layout.addWidget(split,1)
     def data_table(self,headers):
@@ -194,14 +264,85 @@ class MainWindow(W.QMainWindow):
     def selected_id(self,widget):
         row_index=widget.currentRow()
         return widget.item(row_index,0).data(C.Qt.UserRole) if row_index>=0 and widget.item(row_index,0) else None
+    def selected_experiment(self):
+        item=self.experiments.currentItem()
+        return item.data(C.Qt.UserRole) if item else None
+    def toggle_archived(self,value):
+        self.show_archived=bool(value)
+        for toggle in self.archived_toggles:
+            if toggle.isChecked()!=self.show_archived:
+                with C.QSignalBlocker(toggle):toggle.setChecked(self.show_archived)
+        self.refresh()
+    def entry_menu(self,kind,view,identity,point,extras=()):
+        if not identity:return
+        if self.folder_entry(kind,identity):return
+        from . import library_edits
+        info=self.safe(lambda:library_edits.describe(self.app.store,kind,identity))
+        if not info:return
+        menu=W.QMenu(self)
+        for caption,handler in extras:menu.addAction(caption,handler)
+        if extras:menu.addSeparator()
+        menu.addAction("恢复（取消归档）" if info["archived"] else "归档",lambda:self.archive_entry(kind,identity))
+        menu.addAction("删除…",lambda:self.remove_entry(kind,identity))
+        menu.exec(view.viewport().mapToGlobal(point))
+    def experiment_menu(self,point):
+        identity=self.selected_experiment()
+        self.entry_menu("experiment",self.experiments,identity,point,[("打开实验",lambda:self.open_experiment(identity))])
+    def source_menu(self,point):
+        self.entry_menu("source",self.sources,self.selected_id(self.sources),point,[("查看原页",self.selected_source)])
+    def point_menu(self,point):
+        self.entry_menu("object",self.points,self.selected_id(self.points),point,[("查看知识正文",self.selected_point)])
+    def folder_entry(self,kind,identity):
+        if kind=="object" and (identity or "").startswith("folder/"):
+            self.notify("这一行是知识目录，不能归档或删除；请选中里面具体的一条知识。");return True
+        return False
+
+    def archive_entry(self,kind,identity):
+        from . import library_edits
+        if not identity:
+            self.notify("请先选中一项。");return
+        if self.folder_entry(kind,identity):return
+        info=self.safe(lambda:library_edits.describe(self.app.store,kind,identity))
+        if not info:return
+        try:result=library_edits.set_archived(self.app.store,kind,identity,not info["archived"])
+        except Exception as exc:self.notify(self.app.settings.redact(str(exc)),True);return
+        self.status.showMessage(("已归档%s：%s" if result["archived"] else "已恢复%s：%s")%(library_edits.LABELS[kind],result["title"]))
+        self.refresh()
+    def confirm_remove(self,kind,info):
+        from . import library_edits
+        lines=[f"将彻底删除{library_edits.LABELS[kind]}：{info['title']}",""]
+        if kind=="source":
+            lines.append(f"原件与 {info['pages']} 页文本、{info['books']} 页检索索引、{info['knowledge']} 条知识来源记录会一并清除。")
+            if info["experiments"]:lines.append("这些实验会失去与它的关联："+"、".join(info["experiments"]))
+            if info["datasets"]:lines.append(f"{info['datasets']} 份关联数据表也会移除。")
+        elif kind=="object":
+            lines.append(f"{info['revisions']} 个修订、{info['categories']} 个目录归属、{info['products']} 份生成产物会一并删除。")
+        else:
+            lines.append(f"实验下 {info['objects']} 份成果、{info['messages']} 条对话记录与全部生成产物都会删除。")
+        lines+=["","此操作不可撤销；只想从列表里收起来就用“归档”。","输入 删除 两个字表示确认："]
+        text,ok=W.QInputDialog.getText(self,"删除确认","\n".join(lines))
+        return bool(ok) and text.strip()=="删除"
+    def remove_entry(self,kind,identity):
+        from . import library_edits
+        if not identity:
+            self.notify("请先选中一项。");return
+        if self.folder_entry(kind,identity):return
+        info=self.safe(lambda:library_edits.describe(self.app.store,kind,identity))
+        if not info or not self.confirm_remove(kind,info):return
+        try:result=library_edits.remove(self.app.store,kind,identity)
+        except Exception as exc:self.notify(self.app.settings.redact(str(exc)),True);return
+        self.status.showMessage(f"已删除{library_edits.LABELS[kind]}：{result['title']}")
+        if kind=="experiment" and self.current_exp==identity:
+            self.current_exp=None;self.switch("experiments")
+        self.refresh()
     def refresh(self):
-        self.state=self.app.state(include_usage=False)
+        self.state=self.app.state(include_usage=False,include_archived=self.show_archived)
         question_count=len(self.state.get("pending_questions",[]));self.questions_button.setText("回答助手问题"+(f"（{question_count}）" if question_count else ""));self.questions_button.setVisible(bool(question_count))
-        rows=[(exp["id"],f"{exp['title']}\n最近保存 {exp['updated'][:10]}",exp["id"]) for exp in self.state["experiments"]]
+        rows=[(exp["id"],f"{exp['title']}{'　· 已归档' if exp.get('archived') else ''}\n最近保存 {exp['updated'][:10]}",exp["id"]) for exp in self.state["experiments"]]
         self.sync_session_items(self.experiments,rows)
         self.experiment_open.setEnabled(bool(rows))
         if rows and not self.experiments.currentItem():self.experiments.setCurrentRow(0)
-        self.fill_table(self.sources,[(s["id"],[s["name"],s["kind"].upper(),s["page_count"],s["metadata"]["origin"]]) for s in self.state["sources"]])
+        self.fill_table(self.sources,[(s["id"],[s["name"]+("　· 已归档" if s.get("archived") else ""),s["kind"].upper(),s["page_count"],s["metadata"]["origin"]]) for s in self.state["sources"]])
         self.more_menu.clear();clear(self.library_activities)
         for pack in self.state["formats"]["packages"]:
             for entry in pack["ui"]:
@@ -293,7 +434,7 @@ class MainWindow(W.QMainWindow):
         if not hasattr(self,"points"):return
         item=self.categories.currentItem();category=item.data(0,C.Qt.UserRole) if item else None
         from .knowledge_index import search
-        cards=self.safe(lambda:search(self.app.store,self.search.text(),kind=self.kind.currentData(),category=category))
+        cards=self.safe(lambda:search(self.app.store,self.search.text(),kind=self.kind.currentData(),category=category,include_archived=self.show_archived))
         if cards is not None:
             from .worksheet_presentation import scientific_text
             rows=[]
@@ -305,7 +446,7 @@ class MainWindow(W.QMainWindow):
                 location="；".join(f"第 {', '.join(pages)} 页 · {name}" for name,pages in by_file.items())
                 role=(c.get("topic") or {}).get("role")
                 kind={"core":"核心知识","detail":"补充知识","overlap":"相近表述"}.get(role,KINDS.get(c["kind"],c["kind"]))
-                rows.append((c["id"],[scientific_text(c["title"]),scientific_text(c["summary"]) or "待生成说明",location,kind,c["revision"]]))
+                rows.append((c["id"],[scientific_text(c["title"])+("　· 已归档" if c.get("archived") else ""),scientific_text(c["summary"]) or "待生成说明",location,kind,c["revision"]]))
             header=self.points.horizontalHeader()
             for column in (3,4):
                 header.setSectionResizeMode(column,W.QHeaderView.ResizeToContents)
@@ -377,16 +518,54 @@ class MainWindow(W.QMainWindow):
             running=self.app.store.one("SELECT name FROM runtime_tools WHERE job_id=? AND status='started' ORDER BY started DESC LIMIT 1",(active[0]['id'],))
             if running and running['name']=='review_document_content':progress='正在对照原件核对文稿内容，成果列表中的版本仍在校对'
             builds=self.app.store.all("SELECT purpose,status FROM model_requests WHERE job_id=? AND purpose LIKE 'worksheet_%'",(active[0]["id"],))
+            counts=None
             if active[0]["payload"].get("activity")=="worksheet" or any(r["purpose"]=="worksheet_outline" for r in builds):
                 pages=[r for r in builds if r["purpose"].startswith("worksheet_page_")]
                 done=sum(r["status"]=="returned" for r in pages)
                 progress=(f"正在建立测量页，已收到 {done}/{len(pages)} 页" if pages else "正在按讲义梳理测量方法与取数条件")
                 if any(r["purpose"]=="worksheet_source_relations" for r in builds):
                     progress="正在对照原页，核实各页的测量关系"
+                if pages:counts=(done,len(pages))
             self.status.showMessage(progress)
-            if self.home_mode=='working':self.exp_context.setText(progress)
-        elif self.app.questions.pending(self.current_exp):self.status.showMessage("助手需要你确认一些事实，可直接在聊天里回答，或点“回答助手问题”。")
-        else:self.status.clearMessage()
+            self.refresh_progress(active[0],progress,counts)
+        elif self.app.questions.pending(self.current_exp):
+            self.status.showMessage("助手需要你确认一些事实，可直接在聊天里回答，或点“回答助手问题”。")
+            self.refresh_progress(None)
+        else:
+            self.status.clearMessage()
+            self.refresh_progress(None)
+    def refresh_progress(self,job,headline="",counts=None):
+        card=getattr(self,"progress_card",None)
+        if card is None:return
+        if job is None:
+            card.setVisible(False)
+            return
+        running=self.app.store.one("SELECT name,started FROM runtime_tools WHERE job_id=? AND status='started' ORDER BY started DESC LIMIT 1",(job["id"],))
+        request=self.app.store.one("SELECT phase,purpose,status FROM model_requests WHERE job_id=? ORDER BY started DESC LIMIT 1",(job["id"],))
+        done=self.app.store.all("SELECT name,status,started,finished FROM runtime_tools WHERE job_id=? AND status!='started' ORDER BY COALESCE(finished,started) DESC LIMIT 3",(job["id"],))
+        stage=""
+        if running:stage="正在"+TOOL_STAGES.get(running["name"],"处理"+running["name"])
+        if not stage and request and request["status"] in ("started","streaming"):
+            stage=REQUEST_PHASES.get(request["phase"],request["phase"] or "")
+        if not stage:stage=headline or "助手正在处理当前请求"
+        self.progress_stage.setText(stage)
+        spent=elapsed_text(job.get("created"))
+        self.progress_elapsed.setText(("已用 "+spent) if spent else "")
+        if counts:
+            self.progress_bar.setRange(0,counts[1]);self.progress_bar.setValue(counts[0])
+        else:
+            self.progress_bar.setRange(0,0)
+        lines=[]
+        if running:
+            lines.append("· "+TOOL_STAGES.get(running["name"],running["name"])+" · 正在执行"+(" "+elapsed_text(running["started"]) if elapsed_text(running["started"]) else ""))
+        for row in done:
+            mark="·" if row["status"]=="finished" else "×"
+            seconds=span_text(row["started"],row["finished"])
+            lines.append(f"{mark} "+TOOL_STAGES.get(row["name"],row["name"])+(" · "+seconds if seconds else "")+("" if row["status"]=="finished" else " · 没有完成"))
+        self.progress_steps.setText("\n".join(lines[:4]))
+        self.progress_steps.setVisible(bool(lines))
+        card.setVisible(True)
+
     def refresh_import_state(self, jobs):
         imports=[j for j in jobs if j["kind"]=="import"]
         pending=[j for j in imports if j["status"] in ("queued","running")]

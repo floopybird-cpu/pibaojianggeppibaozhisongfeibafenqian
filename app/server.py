@@ -58,17 +58,20 @@ class Application:
         self.token = secrets.token_urlsafe(32)
         self.demo_lock=threading.Lock()
 
-    def state(self, *, include_usage=True):
-        sources=self.store.all("SELECT s.id,s.name,s.kind,s.sha,s.created,s.metadata,(SELECT COUNT(*) FROM pages p WHERE p.source_id=s.id) AS page_count FROM sources s ORDER BY s.created DESC")
+    def state(self, *, include_usage=True, include_archived=False):
+        scope = "" if include_archived else " WHERE s.archived=''"
+        sources=self.store.all("SELECT s.id,s.name,s.kind,s.sha,s.created,s.metadata,s.archived,(SELECT COUNT(*) FROM pages p WHERE p.source_id=s.id) AS page_count FROM sources s"+scope+" ORDER BY s.created DESC")
         for s in sources:
             s["metadata"]=json.loads(s["metadata"])
         jobs=self.store.all("SELECT id,kind,status,progress,payload,result,error,created,updated FROM jobs ORDER BY created DESC")
         for j in jobs:
             j["payload"]=json.loads(j["payload"]);j["payload"].pop("upload",None)
             j["result"]=json.loads(j["result"]) if j["result"] else None
-        return {"version":__version__,"milestone":"PH-M2",**({'usage':self.agent.runtime.summary()} if include_usage else {}), "sources":sources,"experiments":self.store.all("SELECT id,title,goal,updated FROM experiments ORDER BY updated DESC"),
+        experiments=self.store.all("SELECT id,title,goal,updated,archived FROM experiments"+("" if include_archived else " WHERE archived=''")+" ORDER BY updated DESC")
+        knowledge_count=self.store.one("SELECT COUNT(*) AS n FROM objects WHERE experiment_id IS NULL AND archived='' AND kind IN ('SciencePoint','MathFoundation','Formula','MathUse','KnowledgeRelation')")["n"]
+        return {"version":__version__,"milestone":"PH-M2",**({'usage':self.agent.runtime.summary()} if include_usage else {}), "sources":sources,"experiments":experiments,
                 "categories":self.store.all("SELECT * FROM categories"),"jobs":jobs,"settings":self.settings.read(),"formats":self.registry.public(),
-                "knowledge_count":self.store.one("SELECT COUNT(*) AS n FROM objects WHERE experiment_id IS NULL AND kind IN ('SciencePoint','MathFoundation','Formula','MathUse','KnowledgeRelation')")["n"], "products_directory": str(self.publications.root),"pending_questions":[{k:v for k,v in q.items() if k!='context'} for q in self.questions.pending(include_all=True)]}
+                "knowledge_count":knowledge_count, "products_directory": str(self.publications.root),"pending_questions":[{k:v for k,v in q.items() if k!='context'} for q in self.questions.pending(include_all=True)]}
 
     def source(self, identity):
         src=self.store.one("SELECT * FROM sources WHERE id=?",(identity,))

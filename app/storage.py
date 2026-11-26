@@ -119,6 +119,11 @@ class Store:
                 conn.execute("ALTER TABLE experiments ADD COLUMN agent_options TEXT NOT NULL DEFAULT '{}'")
             columns={r[1] for r in conn.execute("PRAGMA table_info(datasets)")}
             if "selection" not in columns:conn.execute("ALTER TABLE datasets ADD COLUMN selection TEXT NOT NULL DEFAULT '{}'")
+            # 归档只改可见性：记录归档时间，空串表示仍在用。删除才是真删。
+            for table in ("sources","objects","experiments"):
+                columns={r[1] for r in conn.execute(f"PRAGMA table_info({table})")}
+                if "archived" not in columns:
+                    conn.execute(f"ALTER TABLE {table} ADD COLUMN archived TEXT NOT NULL DEFAULT ''")
             conn.execute("INSERT OR IGNORE INTO meta VALUES('schema','1')")
             from .knowledge_seed import install
             install(conn)

@@ -13,7 +13,7 @@ from .tool_catalog import ToolCatalog,BASE_INSTRUCTIONS,READ_ONLY
 
 def protected_state(agent,experiment_id,source_id,prompt):
     state={'current_user_request':prompt,'experiment_id':experiment_id}
-    state['available_library_sources']=agent.store.all('SELECT id,name,kind,created AS imported_at,(SELECT count(*) FROM pages p WHERE p.source_id=s.id) page_count FROM sources s ORDER BY created,id')
+    state['available_library_sources']=agent.store.all("SELECT id,name,kind,created AS imported_at,(SELECT count(*) FROM pages p WHERE p.source_id=s.id) page_count FROM sources s WHERE s.archived='' ORDER BY created,id")
     if experiment_id:
         exp=agent.store.experiment(experiment_id)
         state['experiment']={k:exp[k] for k in ('title','goal','notes','background','source_ids','instruments')}
@@ -39,7 +39,7 @@ def protected_state(agent,experiment_id,source_id,prompt):
     from .material_context import background_records
     state['material_background']=background_records(agent.store,selected,experiment_id)
     if not experiment_id:
-        state['available_reference_materials']=agent.store.all("SELECT id,name,kind,(SELECT count(*) FROM pages p WHERE p.source_id=s.id) page_count FROM sources s WHERE kind IN ('pdf','docx','pptx','md','txt') AND id!=? ORDER BY name",(source_id or '',))
+        state['available_reference_materials']=agent.store.all("SELECT id,name,kind,(SELECT count(*) FROM pages p WHERE p.source_id=s.id) page_count FROM sources s WHERE kind IN ('pdf','docx','pptx','md','txt') AND archived='' AND id!=? ORDER BY name",(source_id or '',))
     return state
 
 

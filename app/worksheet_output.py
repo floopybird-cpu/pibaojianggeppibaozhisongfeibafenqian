@@ -1,6 +1,7 @@
 """Plotting, formula display and reproducible exports of the current measurement revision."""
 import ast
 import json
+import math
 import os
 import re
 import shutil
@@ -13,6 +14,21 @@ import numpy as np
 from .excel_names import sheet_name
 from .worksheet_math import compute, display_series, effective_fields, expression_tree, linear, number, resolved_window, selected_rows
 from .worksheets import table_state
+
+
+def literal(value):
+    """A number as LaTeX; long integers and tiny magnitudes keep a readable order."""
+    if isinstance(value,bool) or not isinstance(value,(int,float)):
+        return str(value)
+    if not math.isfinite(value):
+        return str(value)
+    if abs(value)<1e5 and (value==0 or abs(value)>=1e-4):
+        return str(value)
+    text=format(value,".6g")
+    if "e" not in text:
+        return text
+    mantissa,exponent=text.split("e")
+    return mantissa.rstrip("0").rstrip(".")+r"\times 10^{"+str(int(exponent))+"}"
 
 
 def formula(expr, symbols=None, *, display_names=None):
@@ -28,7 +44,7 @@ def formula(expr, symbols=None, *, display_names=None):
         if isinstance(n,(ast.List,ast.Tuple)):
             return r"\left["+ ", ".join(tex(e) for e in n.elts)+r"\right]"
         if isinstance(n,ast.Constant):
-            return str(n.value)
+            return literal(n.value)
         if isinstance(n,ast.Name):
             if display_names and n.id in display_names:return display_names[n.id]
             source_symbol=(symbols or {}).get(n.id)

@@ -30,7 +30,7 @@ class TextbookTests(unittest.TestCase):
             doc.save(original)
         import hashlib
         checksum = hashlib.sha256(original.read_bytes()).hexdigest()
-        self.store.execute("INSERT INTO sources VALUES(?,?,?,?,?,?,?)",
+        self.store.execute("INSERT INTO sources(id,sha,name,kind,original,created,metadata) VALUES(?,?,?,?,?,?,?)",
                            ("book",checksum,"Optics.pdf","pdf","originals/optics.pdf",now(),"{}"))
         for number in range(1, 7):
             self.store.execute("INSERT INTO pages VALUES(?,?,?,?,?,?)", ("book",number,str(number),"Optics",None,"[]"))
@@ -55,7 +55,7 @@ class TextbookTests(unittest.TestCase):
             self.assertEqual(start.call_count, 3)
 
     def test_bilingual_entry_is_shared_and_pinned_revision_is_preserved(self):
-        self.store.execute("INSERT INTO objects VALUES(?,?,?,?,?,?)", ("lens","SciencePoint",None,2,"空间滤波",now()))
+        self.store.execute("INSERT INTO objects(id,kind,experiment_id,revision,title,created) VALUES(?,?,?,?,?,?)", ("lens","SciencePoint",None,2,"空间滤波",now()))
         anchor = self.app.materials.make_anchor("book",2)["id"]
         for rev, text in [(1,"空间滤波 spatial filtering"), (2,"空间滤波 spatial filtering in optics")]:
             self.store.execute("INSERT INTO revisions VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -132,7 +132,7 @@ class TextbookTests(unittest.TestCase):
         for i,title in enumerate(["成像位置","像距的确定","光圈的作用"]):
             body={"title":title,"definition":title,"search_summary":"成像教学材料："+title,"search_terms":[title],
                   "conditions":["限制条件"],"sources":[anchor]}
-            store.execute("INSERT INTO objects VALUES(?,?,?,?,?,?)",(f"item{i}","SciencePoint",None,1,title,now()))
+            store.execute("INSERT INTO objects(id,kind,experiment_id,revision,title,created) VALUES(?,?,?,?,?,?)",(f"item{i}","SciencePoint",None,1,title,now()))
             store.execute("INSERT INTO revisions VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",(f"item{i}",1,"SciencePoint","fixture","1","digest",1,canonical(body),canonical([anchor]),"[]",None,now()))
         with store.transaction() as conn:kb.migrate(conn)
         flow=self.app.knowledge

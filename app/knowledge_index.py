@@ -152,9 +152,9 @@ def with_locations(store, cards):
     return [dict(card,locations=locations.get((card["id"],card["revision"]),[])) for card in cards]
 
 
-def search(store, query="", *, pins=(), kind=None, category=None, limit=None, source_id=None):
+def search(store, query="", *, pins=(), kind=None, category=None, limit=None, source_id=None, include_archived=False):
     params = [canonical({p["id"]:p["revision"] for p in pins if isinstance(p,dict) and "id" in p and "revision" in p})]
-    cond = []
+    cond = [] if include_archived else ["o.archived=''"]
     if kind:
         cond.append("o.kind=?"); params.append(kind)
     if source_id:
@@ -173,7 +173,7 @@ def search(store, query="", *, pins=(), kind=None, category=None, limit=None, so
             return []
         cond.append("c.id IN (SELECT rowid FROM kb_card_search WHERE kb_card_search MATCH ?)")
         params.append(expression(tokens))
-    rows = store.all("""SELECT c.object_id AS id,c.revision,c.title,c.summary,c.keywords,o.kind FROM kb_cards c
+    rows = store.all("""SELECT c.object_id AS id,c.revision,c.title,c.summary,c.keywords,o.kind,o.archived FROM kb_cards c
         JOIN objects o ON o.id=c.object_id LEFT JOIN json_each(?) pin ON pin.key=c.object_id
         WHERE c.revision=coalesce(pin.value,o.revision)""" +
         "".join(" AND "+v for v in cond)+" ORDER BY c.title,c.object_id",params)

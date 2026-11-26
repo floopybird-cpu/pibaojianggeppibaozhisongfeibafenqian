@@ -84,7 +84,7 @@ class Materials:
                     with self.store.transaction() as conn:
                         if conn.execute("SELECT cancel FROM jobs WHERE id=?", (job_id,)).fetchone()[0]:
                             raise ImportCancelled()
-                        conn.execute("INSERT INTO sources VALUES(?,?,?,?,?,?,?)", (source_id, sha, payload["name"], kind,
+                        conn.execute("INSERT INTO sources(id,sha,name,kind,original,created,metadata) VALUES(?,?,?,?,?,?,?)", (source_id, sha, payload["name"], kind,
                                      str(original.relative_to(self.store.authority)), now(), canonical(payload["metadata"])))
                         for page in pages:
                             image = str((destination / page["image"]).relative_to(self.store.authority)) if page["image"] else None

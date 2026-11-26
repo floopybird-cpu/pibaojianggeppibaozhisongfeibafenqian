@@ -352,6 +352,32 @@ def bound_tree(expr,field_units,axis_unit,physical,aliases=None):
     return node
 
 
+def constant_value(node):
+    """Fold a subtree of literals only; None when a name or call is involved."""
+    if isinstance(node,ast.Constant):
+        return node.value if type(node.value) in (int,float) else None
+    if isinstance(node,ast.UnaryOp) and isinstance(node.op,(ast.UAdd,ast.USub)):
+        value=constant_value(node.operand)
+        return None if value is None else (-value if isinstance(node.op,ast.USub) else value)
+    if isinstance(node,ast.BinOp) and isinstance(node.op,(ast.Add,ast.Sub,ast.Mult,ast.Div,ast.Pow)):
+        left,right=constant_value(node.left),constant_value(node.right)
+        if left is None or right is None:return None
+        operation={ast.Add:operator.add,ast.Sub:operator.sub,ast.Mult:operator.mul,
+                   ast.Div:operator.truediv,ast.Pow:operator.pow}[type(node.op)]
+        try:value=operation(left,right)
+        except (ArithmeticError,TypeError,ValueError):return None
+        return value if math.isfinite(value) else None
+    return None
+
+
+def unit_factors(unit):
+    """Conversion factors a formula must not bake in: its unit's scale and inverse."""
+    from .worksheet_units import transform
+    scale,_=transform(unit)
+    if not math.isfinite(scale) or scale<=0 or scale==1:return ()
+    return (scale,1/scale)
+
+
 def validate_expression(node,units,item,page):
     if item.get("literal_error"):raise ValueError(item["literal_error"])
     if page.get("check_dimensions"):check_formula_dimensions(node,units,item["unit"],item["label"])
@@ -362,6 +388,14 @@ def validate_expression(node,units,item,page):
                 literals=[v.value for v in (n.left,n.right) if isinstance(v,ast.Constant) and type(v.value) in (int,float)]
                 if any(v in (1e-9,1e-6,.001,.01,100,1000,1e6,1e9) and v not in documented for v in literals):
                     raise ValueError(item["label"]+" 含手写倍率。单位由宿主换算；真实标定或物性系数请使用注明意义和单位的量。")
+        factors=unit_factors(item["unit"])
+        for n in ast.walk(node):
+            value=constant_value(n)
+            if value is None or value in documented:continue
+            if isinstance(n,ast.Constant) and type(n.value) is int and abs(n.value)>=10**12:
+                raise ValueError(item["label"]+" 的算式写了手算的单位换算或圆周率的整数近似。本页在 SI 内求值，换算由单位字段完成；请只写物理关系，π 写 pi。")
+            if any(math.isclose(abs(value),factor,rel_tol=1e-6) for factor in factors):
+                raise ValueError(item["label"]+" 的算式已自带单位换算（倍率 "+format(value,".6g")+"）。本页在 SI 内求值，度与弧度、毫与微这类换算由 unit 完成；请只写物理关系。")
 
 
 def validate_page(page):

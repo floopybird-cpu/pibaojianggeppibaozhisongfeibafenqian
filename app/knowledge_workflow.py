@@ -88,7 +88,7 @@ class KnowledgeWorkflow:
             raise InterruptedError("已停止整理；已保存的知识和页段可继续使用")
 
     def sources(self,exp):
-        sources=self.store.all("SELECT id,name FROM sources WHERE kind IN ('pdf','docx','md','txt','png','jpg','jpeg') ORDER BY name")
+        sources=self.store.all("SELECT id,name FROM sources WHERE kind IN ('pdf','docx','md','txt','png','jpg','jpeg') AND archived='' ORDER BY name")
         if exp:
             selected=set(self.store.experiment(exp)["source_ids"])
             if selected:

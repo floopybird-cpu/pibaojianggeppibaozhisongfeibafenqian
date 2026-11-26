@@ -88,6 +88,26 @@ def build_home(ui):
     controls.addStretch()
     action.addLayout(controls)
 
+    # 生成过程：任务进行中才出现，说明现在在做什么、已经多久、刚刚做完哪几步。
+    ui.progress_card, progress = card(main, "progressCard")
+    head = W.QHBoxLayout()
+    ui.progress_stage = label("", "progressStage")
+    ui.progress_elapsed = label("", "bodyNote")
+    head.addWidget(ui.progress_stage, 1)
+    head.addWidget(ui.progress_elapsed)
+    progress.addLayout(head)
+    ui.progress_bar = W.QProgressBar()
+    ui.progress_bar.setTextVisible(False)
+    ui.progress_bar.setFixedHeight(7)
+    progress.addWidget(ui.progress_bar)
+    ui.progress_steps = label("", "bodyNote")
+    progress.addWidget(ui.progress_steps)
+    foot = W.QHBoxLayout()
+    foot.addWidget(small_button("任务记录", ui.open_jobs))
+    foot.addStretch()
+    progress.addLayout(foot)
+    ui.progress_card.setVisible(False)
+
     heading(main, "实验问答")
     ui.messages = MarkdownView("", ui.app.store, auto_height=False, strict=False)
     ui.messages.anchorClicked.connect(ui.follow_source)
@@ -169,9 +189,11 @@ def build_home(ui):
 def home_styles():
     return """
     QFrame#actionCard {background:#eaf2e9;border:1px solid #c9dccd;border-radius:10px;}
+    QFrame#progressCard {background:#f3f8ef;border:1px solid #d3e2c9;border-radius:10px;}
     QFrame#panel,QFrame#composer {background:#ffffff;border:1px solid #d5e2d8;border-radius:10px;}
     QFrame#divider {color:#cfdbd1; max-height:1px;}
     QLabel[role='cardTitle'] {font-size:20px;font-weight:650;color:#205542;}
+    QLabel[role='progressStage'] {font-size:15px;font-weight:650;color:#205542;}
     QLabel[role='section'] {font-size:17px;font-weight:650;color:#263e32;}
     QLabel[role='bodyNote'] {font-size:13px;color:#536857;}
     QPushButton[quiet='true'] {border:0;background:transparent;color:#276550;padding:5px 6px;text-align:left;}
